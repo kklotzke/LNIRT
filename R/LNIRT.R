@@ -1,5 +1,7 @@
 #' @importFrom MASS mvrnorm
-
+#' @importFrom stats ks.test pchisq pgamma pnorm qnorm rbeta
+#' rbinom rchisq rgamma rlnorm rnorm runif var
+#' @importFrom utils flush.console
 
 #' @export
 LNIRT <- function(RT, Y, XG, guess, par1, residual, WL, td, alpha, beta) {
@@ -156,10 +158,10 @@ LNIRT <- function(RT, Y, XG, guess, par1, residual, WL, td, alpha, beta) {
                 Y <- SimulateY(Y = Y, theta = theta[, 1], alpha0 = ab[, 1], beta0 = ab[, 2], guess0 = guess0, D = D)
             }
             if (par1 == 1) {
-                SR <- DrawS_LNIRT(alpha0 = ab[, 1], beta0 = ab[, 2] * ab[, 1], guess0 = guess0, theta = theta[, 1], Y = Y)
+                SR <- DrawS_LNIRT(alpha0 = ab[, 1], beta0 = ab[, 2] * ab[, 1], guess0 = guess0, theta0 = theta[, 1], Y = Y)
                 ZR <- DrawZ_LNIRT(alpha0 = ab[, 1], beta0 = ab[, 2] * ab[, 1], theta0 = theta[, 1], S = SR, D = D)
             } else {
-                SR <- DrawS_LNIRT(alpha0 = ab[, 1], beta0 = ab[, 2], guess0 = guess0, theta = theta[, 1], Y = Y)
+                SR <- DrawS_LNIRT(alpha0 = ab[, 1], beta0 = ab[, 2], guess0 = guess0, theta0 = theta[, 1], Y = Y)
                 ZR <- DrawZ_LNIRT(alpha0 = ab[, 1], beta0 = ab[, 2], theta0 = theta[, 1], S = SR, D = D)
             }
         } else {
