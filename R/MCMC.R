@@ -69,7 +69,7 @@ SimulateY <- function(Y, theta, alpha0, beta0, guess0, D) {
 
 ### MCMC functions used in LNRT ###
 
-DrawLambdaPhi <- function(RT, theta, sigma2, muI, SigmaI, ingroup) {
+DrawLambdaPhi_LNRT <- function(RT, theta, sigma2, muI, SigmaI, ingroup) {
     
     # library(MASS)
     K <- ncol(RT)
@@ -79,7 +79,7 @@ DrawLambdaPhi <- function(RT, theta, sigma2, muI, SigmaI, ingroup) {
     varest <- solve(kronecker(diag(1/sigma2[1:K]), (t(H) %*% H)) + kronecker(diag(1, K), invSigmaI))
     meanest <- t((t(H) %*% RT)/(t(matrix(sigma2, nrow = K, ncol = 2))) + matrix(t(muI[1, ] %*% invSigmaI), ncol = K, nrow = 2))
     meanest <- apply((matrix(rep(meanest, K), ncol = 2 * K) %*% varest) * t(kronecker(diag(K), c(1, 1))), 2, sum)
-    lambdaphi <- mvrnorm(1, mu = meanest, Sigma = varest)
+    lambdaphi <- MASS::mvrnorm(1, mu = meanest, Sigma = varest)
     lambdaphi <- matrix(lambdaphi, ncol = 2, nrow = K, byrow = RT)
     
     set <- which(lambdaphi[, 1] < 0.3)
@@ -209,10 +209,17 @@ DrawTheta_LNIRT <- function(alpha0, beta0, Z, mu, sigma) {
 }
 
 
-# DrawZeta_LNIRT <- function(RT,phi,lambda,sigma2,mu,sigmaz){ # Not used anywhere?  K <- ncol(RT) N <- nrow(RT) Z <-
-# matrix(lambda,nrow=K,ncol=N) - t(RT) X <- matrix(phi,K,1) sigma2inv <- diag(1/sigma2[1:K]) vartheta <- (1/((t(phi)%*%sigma2inv)%*%phi +
-# 1/sigmaz))[1,1] meantheta <- matrix(((t(phi)%*%sigma2inv)%*%Z + t(mu/sigmaz))*vartheta,ncol=1,nrow=N) zeta <-
-# matrix(rnorm(N,mean=meantheta,sd=sqrt(vartheta)),ncol=1,nrow=N) return(zeta) }
+DrawZeta_LNIRT <- function(RT, phi, lambda, sigma2, mu, sigmaz) {
+    K <- ncol(RT)
+    N <- nrow(RT)
+    Z <- matrix(lambda, nrow = K, ncol = N) - t(RT)
+    X <- matrix(phi, K, 1)
+    sigma2inv <- diag(1/sigma2[1:K])
+    vartheta <- (1/((t(phi) %*% sigma2inv) %*% phi + 1/sigmaz))[1, 1]
+    meantheta <- matrix(((t(phi) %*% sigma2inv) %*% Z + t(mu/sigmaz)) * vartheta, ncol = 1, nrow = N)
+    zeta <- matrix(rnorm(N, mean = meantheta, sd = sqrt(vartheta)), ncol = 1, nrow = N)
+    return(zeta)
+}
 
 
 DrawC_LNIRT <- function(S, Y) {

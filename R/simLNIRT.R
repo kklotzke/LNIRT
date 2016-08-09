@@ -1,3 +1,4 @@
+#' @export
 simLNIRT <- function(N, K, rho, td, WL) {
     # N respondents, K items rho : covariance theta td : optional if set time discrinination is equal to one library(MASS)
     
@@ -16,7 +17,7 @@ simLNIRT <- function(N, K, rho, td, WL) {
     mutheta <- rep(0, 2)
     covtheta <- diag(2)
     covtheta[1, 2] <- covtheta[2, 1] <- rho
-    theta <- mvrnorm(N, mutheta, covtheta, empirical = TRUE)
+    theta <- MASS::mvrnorm(N, mutheta, covtheta, empirical = TRUE)
     
     covitem <- diag(4)
     for (ii in 1:4) {
@@ -27,23 +28,23 @@ simLNIRT <- function(N, K, rho, td, WL) {
     sigma2 <- rlnorm(K, meanlog = 0, sdlog = 0.3)
     
     if (td == 1 & WL == 0) {
-        ab <- mvrnorm(K, muitem, covitem)
+        ab <- MASS::mvrnorm(K, muitem, covitem)
         ab[, 3] <- rep(1, K)
-        abn <- mvrnorm(K, muitem[-3], covitem[-3, -3])
+        abn <- MASS::mvrnorm(K, muitem[-3], covitem[-3, -3])
         ab[, c(2, 4)] <- abn[, c(2, 3)] - t(matrix(colMeans(abn[, c(2, 3)]), 2, K))
         ab[, 1] <- abs(ab[, 1])
         ab[, 1] <- ab[, 1]/(prod(ab[, 1])^(1/K))
     }
     if (WL == 1) {
         muitem <- c(1, 0, 1, 0)
-        ab <- mvrnorm(K, muitem, covitem)
+        ab <- MASS::mvrnorm(K, muitem, covitem)
         sigma2 <- 1/ab[, 3]^2
         ab[, 1] <- abs(ab[, 1])
         ab[, 1] <- ab[, 1]/(prod(ab[, 1])^(1/K))
     }
     
     if (td == 0 & WL == 0) {
-        ab <- mvrnorm(K, muitem, covitem)
+        ab <- MASS::mvrnorm(K, muitem, covitem)
         ab[, c(2, 4)] <- ab[, c(2, 4)] - t(matrix(colMeans(ab[, c(2, 4)]), 2, K))
         ab[, 1] <- abs(ab[, 1])
         ab[, 1] <- ab[, 1]/(prod(ab[, 1])^(1/K))

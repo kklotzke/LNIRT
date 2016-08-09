@@ -1,3 +1,7 @@
+#' @importFrom MASS mvrnorm
+
+
+#' @export
 LNIRT <- function(RT, Y, XG, guess, par1, residual, WL, td, alpha, beta) {
     ## Main Programm function to call, uses other functions below Inputs: Y = response matrix of dim(N=persons,K=items) RT = log-response time
     ## matrix (time spent on solving an item) of dim(N=persons,K=items) XG = number of XG iterations for the MCMC algorithm guess: optional
@@ -179,9 +183,9 @@ LNIRT <- function(RT, Y, XG, guess, par1, residual, WL, td, alpha, beta) {
         
         dum <- Conditional(2, muP, SigmaP, theta)
         if (par1 == 1) {
-            theta[, 2] <- DrawZ_LNIRTeta(RT = RT, phi = ab[, 3], lambda = ab[, 3] * ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
+            theta[, 2] <- DrawZeta_LNIRT(RT = RT, phi = ab[, 3], lambda = ab[, 3] * ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
         } else {
-            theta[, 2] <- DrawZ_LNIRTeta(RT = RT, phi = ab[, 3], lambda = ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
+            theta[, 2] <- DrawZeta_LNIRT(RT = RT, phi = ab[, 3], lambda = ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
         }
         
         if (ident == 2) {

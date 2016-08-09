@@ -1,4 +1,4 @@
-
+#' @export
 summaryIRT <- function(out, data) {
     
     if (missing(data)) {
@@ -470,8 +470,6 @@ summaryIRT <- function(out, data) {
 #' @param out     estimation result
 #' @param data    simulated data
 #' @export
-
-
 summaryRT <- function(out, data) {
     
     # out : estimates data : simulated

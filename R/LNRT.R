@@ -1,3 +1,4 @@
+#' @export
 LNRT <- function(RT, XG, Discrimination, WL) {
     
     N <- nrow(RT)
@@ -95,7 +96,7 @@ LNRT <- function(RT, XG, Discrimination, WL) {
             dum <- Conditional(kk = 2, Mu = muI, Sigma = SigmaI, Z = ab1)
             ab[, 2] <- DrawLambda_LNRT(RT = RT, zeta = theta, sigma2 = sigma2, mu = dum$CMU, sigma = dum$CVAR)
         } else {
-            dum <- DrawLambda_LNRTPhi(RT, theta, sigma2, muI, SigmaI, ingroup)
+            dum <- DrawLambdaPhi_LNRT(RT, theta, sigma2, muI, SigmaI, ingroup)
             if (Discrimination) {
                 ab[, 1] <- dum$phi
                 ab[, 1] <- ab[, 1]/(prod(ab[, 1])^(1/K))
