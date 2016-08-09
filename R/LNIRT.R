@@ -159,26 +159,26 @@ LNIRT <- function(RT,Y,XG,guess,par1,residual,WL,td,alpha,beta){
         Y <- SimulateY(Y=Y,theta=theta[,1],alpha0=ab[,1],beta0=ab[,2],guess0=guess0,D=D)
       }
       if(par1==1){
-        SR <- DrawS(alpha0=ab[,1],beta0=ab[,2]*ab[,1],guess0=guess0,theta=theta[,1],Y=Y)
-        ZR <- DrawZ(alpha0=ab[,1],beta0=ab[,2]*ab[,1],theta0=theta[,1],S=SR,D=D)
+        SR <- DrawS_LNIRT(alpha0=ab[,1],beta0=ab[,2]*ab[,1],guess0=guess0,theta=theta[,1],Y=Y)
+        ZR <- DrawZ_LNIRT(alpha0=ab[,1],beta0=ab[,2]*ab[,1],theta0=theta[,1],S=SR,D=D)
       }else{
-        SR <- DrawS(alpha0=ab[,1],beta0=ab[,2],guess0=guess0,theta=theta[,1],Y=Y)
-        ZR <- DrawZ(alpha0=ab[,1],beta0=ab[,2],theta0=theta[,1],S=SR,D=D)		
+        SR <- DrawS_LNIRT(alpha0=ab[,1],beta0=ab[,2],guess0=guess0,theta=theta[,1],Y=Y)
+        ZR <- DrawZ_LNIRT(alpha0=ab[,1],beta0=ab[,2],theta0=theta[,1],S=SR,D=D)		
       }
     }
     else{	
       if(par1==1){
-        ZR <- DrawZ(alpha0=ab[,1],beta0=ab[,2]*ab[,1],theta0=theta[,1],S=Y,D=D)
+        ZR <- DrawZ_LNIRT(alpha0=ab[,1],beta0=ab[,2]*ab[,1],theta0=theta[,1],S=Y,D=D)
       }else{
-        ZR <- DrawZ(alpha0=ab[,1],beta0=ab[,2],theta0=theta[,1],S=Y,D=D)		
+        ZR <- DrawZ_LNIRT(alpha0=ab[,1],beta0=ab[,2],theta0=theta[,1],S=Y,D=D)		
       }
     }
     
     dum <- Conditional(1,muP,SigmaP,theta)
     if(par1==1){
-      theta[,1] <- DrawTheta(alpha0=ab[,1],beta0=ab[,2]*ab[,1],Z=ZR,mu=dum$CMU,sigma=dum$CVAR)
+      theta[,1] <- DrawTheta_LNIRT(alpha0=ab[,1],beta0=ab[,2]*ab[,1],Z=ZR,mu=dum$CMU,sigma=dum$CVAR)
     }else{
-      theta[,1] <- DrawTheta(alpha0=ab[,1],beta0=ab[,2],Z=ZR,mu=dum$CMU,sigma=dum$CVAR)
+      theta[,1] <- DrawTheta_LNIRT(alpha0=ab[,1],beta0=ab[,2],Z=ZR,mu=dum$CMU,sigma=dum$CVAR)
     }	
     if(ident==2){#rescale for identification
       theta[,1] <- theta[,1] - mean(theta[,1])
@@ -186,9 +186,9 @@ LNIRT <- function(RT,Y,XG,guess,par1,residual,WL,td,alpha,beta){
     
     dum <- Conditional(2,muP,SigmaP,theta) 
     if(par1==1){
-      theta[,2] <- DrawZeta(RT=RT,phi=ab[,3],lambda=ab[,3]*ab[,4],sigma2=sigma2,mu=as.vector(dum$CMU),sigmaz=as.vector(dum$CVAR)) ## speed 
+      theta[,2] <- DrawZ_LNIRTeta(RT=RT,phi=ab[,3],lambda=ab[,3]*ab[,4],sigma2=sigma2,mu=as.vector(dum$CMU),sigmaz=as.vector(dum$CVAR)) ## speed 
     }else{
-      theta[,2] <- DrawZeta(RT=RT,phi=ab[,3],lambda=ab[,4],sigma2=sigma2,mu=as.vector(dum$CMU),sigmaz=as.vector(dum$CVAR)) ## speed 
+      theta[,2] <- DrawZ_LNIRTeta(RT=RT,phi=ab[,3],lambda=ab[,4],sigma2=sigma2,mu=as.vector(dum$CMU),sigmaz=as.vector(dum$CVAR)) ## speed 
     }
     
     if(ident==2){#rescale for identification
@@ -199,7 +199,7 @@ LNIRT <- function(RT,Y,XG,guess,par1,residual,WL,td,alpha,beta){
     MT2[1:N,1:2] <- MT2[1:N,1:2] + theta^2 
     
     if(PNO >0)  {
-      guess0 <- DrawC(S=SR,Y=Y)
+      guess0 <- DrawC_LNIRT(S=SR,Y=Y)
     }
     Mguess[ii,] <- guess0
     
@@ -212,9 +212,9 @@ LNIRT <- function(RT,Y,XG,guess,par1,residual,WL,td,alpha,beta){
     if(discr==0){
       dum <- Conditional(kk=1,Mu=muI,Sigma=SigmaI,Z=ab1)#discrimination
       if(par1==1){
-        ab[,1] <- abs(DrawAlpha(theta=theta[,1],beta=ab[,2],Z=ZR,mu=dum$CMU,sigma=dum$CVAR))
+        ab[,1] <- abs(DrawAlpha_LNIRT(theta=theta[,1],beta=ab[,2],Z=ZR,mu=dum$CMU,sigma=dum$CVAR))
       }else{
-        ab[,1] <- abs(DrawPhi(RT=ZR,lambda=-ab[,2],zeta=-theta[,1],sigma2=rep(1,K),mu=dum$CMU,sigmal=dum$CVAR))
+        ab[,1] <- abs(DrawPhi_LNIRT(RT=ZR,lambda=-ab[,2],zeta=-theta[,1],sigma2=rep(1,K),mu=dum$CMU,sigmal=dum$CVAR))
       }
     }else{
       ab[,1] <- alpha
@@ -230,7 +230,7 @@ LNIRT <- function(RT,Y,XG,guess,par1,residual,WL,td,alpha,beta){
     if(diffc==0){
       dum <- Conditional(kk=2,Mu=muI,Sigma=SigmaI,Z=ab1)#difficulty
       if(par1==1){
-        ab[,2] <- DrawBeta(theta=theta[,1],alpha=ab[,1],Z=ZR,mu=dum$CMU,sigma=dum$CVAR)
+        ab[,2] <- DrawBeta_LNIRT(theta=theta[,1],alpha=ab[,1],Z=ZR,mu=dum$CMU,sigma=dum$CVAR)
       }else{
         ab[,2] <- -DrawLambda_LNIRT(ZR,-ab[,1],theta[,1],rep(1,K),dum$CMU,dum$CVAR)$lambda
       }
@@ -250,9 +250,9 @@ LNIRT <- function(RT,Y,XG,guess,par1,residual,WL,td,alpha,beta){
     }else{	
       dum <- Conditional(3,muI,SigmaI,ab)#time discrimination
       #if(par1==1){
-      #    ab[,3] <- abs(DrawPhi(RT,ab[,3]*ab[,4],theta[,2],sigma2,dum$CMU,dum$CVAR))
+      #    ab[,3] <- abs(DrawPhi_LNIRT(RT,ab[,3]*ab[,4],theta[,2],sigma2,dum$CMU,dum$CVAR))
       #}else{
-      ab[,3] <- abs(DrawPhi(RT,ab[,4],theta[,2],sigma2,dum$CMU,dum$CVAR))
+      ab[,3] <- abs(DrawPhi_LNIRT(RT,ab[,4],theta[,2],sigma2,dum$CMU,dum$CVAR))
       #}	
       ab[,3] <- ab[,3]/(prod(ab[,3])^(1/K))
     }
@@ -272,7 +272,7 @@ LNIRT <- function(RT,Y,XG,guess,par1,residual,WL,td,alpha,beta){
     }	
     
     MAB[ii,1:K,1:4] <- ab
-    sigma2 <- SampleS2(RT=RT,zeta=theta[,2],lambda=ab[,4],phi=ab[,3])
+    sigma2 <- SampleS2_LNIRT(RT=RT,zeta=theta[,2],lambda=ab[,4],phi=ab[,3])
     if(WL == 1){	    
       Msigma2[ii,1:K] <- 1/sqrt(sigma2) 	
     }else{
