@@ -14,12 +14,14 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
     ## 2: Identification : fix mean ability and speed and product item discrimination responses and response times ident <- 1 (default)
     ident <- 2  #(to investigate person fit using latent scores)
     
-    if (!missing(data))
-    {
+    if (!missing(data)) {
       # Try to find RT and Y in the data set first
       tryCatch(RT <- eval(substitute(RT), data), error=function(e) NULL)
       tryCatch(Y <- eval(substitute(Y), data), error=function(e) NULL)
+    } else {
+      data = NULL
     }
+    
     
     PNO <- guess # TRUE: guessing included
     #WL <- 1  #time discrimination = 1/sqrt(error variance)
@@ -386,19 +388,19 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             lZIA <- lZIA/(XG - 1000)
         }
     }
-    
+
     if (XG > 1000) {
         if (residual) {
             out <- list(Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, 
-                lZP = lZP, lZPT = lZPT, lZPA = lZPA, lZI = lZI, EAPresid = EAPresid, EAPresidA = EAPresidA, EAPKS = EAPKS, EAPKSA, EAPKSA, PFl = PFl, 
-                PFlp = PFlp, IFl = IFl, IFlp = IFlp, EAPl0 = EAPl0, RT = RT, Y = Y, EAPCP1 = EAPCP1, EAPCP2 = EAPCP2, EAPCP3 = EAPCP3, data = data)
+                lZP = lZP, lZPT = lZPT, lZPA = lZPA, lZI = lZI, EAPresid = EAPresid, EAPresidA = EAPresidA, EAPKS = EAPKS, EAPKSA = EAPKSA, PFl = PFl, 
+                PFlp = PFlp, IFl = IFl, IFlp = IFlp, EAPl0 = EAPl0, RT = RT, Y = Y, EAPCP1 = EAPCP1, EAPCP2 = EAPCP2, EAPCP3 = EAPCP3, WL = WL, td = td, guess = guess, par1 = par1, data = data)
         } else {
             out <- list(Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, 
-                RT = RT, Y = Y, data = data)
+                RT = RT, Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data)
         }
     } else {
         out <- list(Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, RT = RT, 
-            Y = Y, data = data)
+            Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data)
     }
     
     class(out) <- "LNIRT"
