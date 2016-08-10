@@ -177,10 +177,13 @@ LNRT <- function(RT, XG, Discrimination, WL) {
     }
     
     if (XG > 1000) {
-        return(list(Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, lZP = lZP, lZPT = lZPT, Msigma2 = Msigma2, 
-            theta = theta, sigma2 = sigma2, lZI = lZI, EAPresid = EAPresid, EAPKS = EAPKS, RT = RT, EAPCP = EAPCP))
+        out <- list(Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, lZP = lZP, lZPT = lZPT, Msigma2 = Msigma2, 
+            theta = theta, sigma2 = sigma2, lZI = lZI, EAPresid = EAPresid, EAPKS = EAPKS, RT = RT, EAPCP = EAPCP)
     } else {
-        return(list(Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Msigma2 = Msigma2, theta = theta, sigma2 = sigma2, 
-            RT = RT))
+        out <- list(Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Msigma2 = Msigma2, theta = theta, sigma2 = sigma2, 
+            RT = RT)
     }
+    
+    class(out) <- "LNRT"
+    return(out)
 }
