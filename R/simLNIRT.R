@@ -84,6 +84,8 @@ simLNIRT <- function(N, K, rho, td, WL) {
         RT[1:N, kk] <- ab[kk, 4] - ab[kk, 3] * theta[, 2] + time[1:N]
     }
     
-    return(list(Y = Y, Yg = Yg, Y1 = Y1, Y1g = Y1g, RT = RT, RT1 = RT1, theta = theta, ab = ab, sigma2 = sigma2, quess = quess))
+    out <- list(Y = Y, Yg = Yg, Y1 = Y1, Y1g = Y1g, RT = RT, RT1 = RT1, theta = theta, ab = ab, sigma2 = sigma2, quess = quess)
+    class(out) <- "simLNIRT"
+    return(out)
 }
 
