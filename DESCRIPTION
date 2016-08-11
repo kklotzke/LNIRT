@@ -1,14 +1,14 @@
 Package: LNIRT
 Type: Package
-Title: What the Package Does (Title Case)
+Title: LogNormal Response Time Item Response Theory Models
 Version: 0.1.0
 Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Maintainer: Konrad Klotzke <omd.bms.utwente.stats@gmail.com>
 Imports:
     MASS,
     stats,
     utils
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Description: LogNormal Response Time Item Response Theory Models
+License: GPL-2 | GPL-3
 LazyData: TRUE
 RoxygenNote: 5.0.1
