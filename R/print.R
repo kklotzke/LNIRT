@@ -391,3 +391,290 @@ print.summary.LNIRT <- function(x, ...)
   }  ## close personfit report
   cat("\n\n")
 }
+
+#' @method print summary.LNRT
+#' @export
+print.summary.LNRT <- function(x, ...)
+{
+  ## Person Fit outcomes
+  
+  if (x$gammamodel) {
+    cat("\n", "Gamma RT Modeling, 2013, J.P. Fox")
+  } else {
+    cat("\n", "Log-Normal RT Modeling, 2013, J.P. Fox")
+  }
+  cat("\n", "Summary of results")
+  
+  
+  if (x$gammamodel) {
+    if (x$simv) {
+      if (ncol(x$Mnug) == 1) {
+        cat("\n\n\t", "Time Intensity parameter", "\n")
+        cat("\t", "item", "\t", "EAP", "\t", "SD", "\t", "Sim", "\n")
+      }
+      if (ncol(x$Mnug) > 1) {
+        cat("\n\n\t", "Time Intensity parameter", "\t", "Shape Parameter Gamma", "\n")
+        cat("\t", "item", "\t", "EAP", "\t", "SD", "\t", "Sim", "\t", "item", "\t", "EAP", "\t", "SD", "\n")
+      }
+    } else {
+      
+      if (ncol(x$Mnug) == 1) {
+        cat("\n\n\t", "Time Intensity parameter", "\n")
+        cat("\t", "item", "\t", "EAP", "\t", "SD", "\n")
+      }
+      
+      if (ncol(x$Mnug) > 1) {
+        cat("\n\n\t", "Time Intensity parameter", "\t", "Shape Parameter Gamma", "\n")
+        cat("\t", "item", "\t", "EAP", "\t", "SD", "\t\t", "item", "\t", "EAP", "\t", "SD", "\n")
+      }
+      
+    }
+  } else {
+    if (x$simv) {
+      if (x$WL) {
+        cat("\n\n\t", "Time Discrimination (Measurement Error)", " ", "Time Intensity", "\n")
+        cat("\t", "item", "\t", "EAP", "\t", "SD", "\t", "Sim", "\t", "item", "\t", "EAP", "\t", "SD", "\t", "Sim", "\n")
+      } else {
+        cat("\n\n\t", "Time Discrimination", "\t\t", "Time Intensity", "\t\t", "Measurement Error Variance", "\n")
+        cat("\t", "item", "\t", "EAP", "\t", "SD", "\t", "Sim", "\t", "item", "\t", "EAP", "\t", "SD", "\t", "Sim", "\t", "EAP", "\t", 
+            "SD", "\t", "Sim", "\n")
+      }
+    } else {
+      if (x$WL) {
+        cat("\n\n\t", "Time Discrimination (Measurement Error)", "\t", "Time Intensity", "\n")
+        cat("\t", "item", "\t", "EAP", "\t", "SD", "\t\t\t", "item", "\t", "EAP", "\t", "SD", "\t", "\n")
+      } else {
+        cat("\n\n\t", "Time Discrimination", "\t", "Time Intensity", "\t", "Measurement Error Variance", "\n")
+        cat("\t", "item", "\t", "EAP", "\t", "SD", "\t", "item", "\t", "EAP", "\t", "SD", "\t", "EAP", "\t", "SD", "\n")
+      }
+    }
+  }
+  
+  if (x$gammamodel) {
+    
+    for (ii in 1:x$K) {
+      cat("\n\t", ii, "\t")
+      printF(tintens[ii], w = 6, d = 3)  # estimated bsp  
+      cat("\t")
+      printF(setintens[ii], w = 6, d = 3)
+      if (x$simv) {
+        cat("\t")
+        printF(x$data$bsp[ii], w = 6, d = 3)  # bsp true value
+        # cat('\n\t', ii,'\t')
+        if (ncol(x$Mnug) > 1) {
+          cat("\t")
+          cat("\t", ii, "\t")
+          printF(x$estnug[ii], w = 6, d = 3)  # Shape Parameter Gamma EAP
+          cat("\t")
+          printF(x$seestnug[ii], w = 6, d = 3)
+        }
+        
+      } else {
+        if (ncol(x$Mnug) == 1) {
+          cat("\t")
+        }
+        
+        if (ncol(x$Mnug) > 1) {
+          cat("\t\t", ii, "\t")
+          printF(x$estnug[ii], w = 6, d = 3)
+          cat("\t")
+          printF(x$seestnug[ii], w = 6, d = 3)
+        }
+      }
+    }
+  } else {
+    for (ii in 1:x$K) {
+      cat("\t")
+      if (x$simv) {
+        cat("\n\t", ii, "\t")
+        if (x$WL) {
+          printF(x$estsigma2[ii], w = 6, d = 3)  # EAP
+          cat("\t")
+          printF(x$seestsigma2[ii], w = 6, d = 3)  # SD     
+          cat("\t")
+          printF(1/sqrt(x$data$sigma2[ii]), w = 6, d = 3)  #SIM      
+        } else {
+          printF(x$tdiscr[ii], w = 6, d = 3)  # EAP
+          cat("\t")
+          printF(x$setdiscr[ii], w = 6, d = 3)  # SD
+          cat("\t")
+          printF(x$data$ab[ii, 3], w = 6, d = 3)  #SIM   
+        }
+        cat("\t", ii, "\t")
+        printF(x$tintens[ii], w = 6, d = 3)  # EAP
+        cat("\t")
+        printF(x$setintens[ii], w = 6, d = 3)  # SD
+        cat("\t")
+        printF(x$data$ab[ii, 4], w = 6, d = 3)  # SIM      
+        cat("\t")
+        if (x$WL) {
+          cat(" ")
+        } else {
+          printF(x$estsigma2[ii], w = 6, d = 3)  # EAP
+          cat("\t")
+          printF(x$seestsigma2[ii], w = 6, d = 3)  # SD     
+          cat("\t")
+          printF(x$data$sigma2[ii], w = 6, d = 3)  #SIM      
+        }
+      } else {
+        cat("\n\t", ii, "\t")
+        if (x$WL) {
+          printF(x$estsigma2[ii], w = 6, d = 3)  # EAP
+          cat("\t")
+          printF(x$seestsigma2[ii], w = 6, d = 3)  # SD     
+          cat("\t\t")
+        } else {
+          printF(x$tdiscr[ii], w = 6, d = 3)  # EAP
+          cat("\t")
+          printF(x$setdiscr[ii], w = 6, d = 3)  # SD
+        }
+        cat("\t", ii, "\t")
+        printF(x$tintens[ii], w = 6, d = 3)  # EAP
+        cat("\t")
+        printF(x$setintens[ii], w = 6, d = 3)  # SD
+        cat("\t")
+        if (x$WL) {
+          cat("")
+        } else {
+          printF(x$estsigma2[ii], w = 6, d = 3)  # EAP
+          cat("\t")
+          printF(x$seestsigma2[ii], w = 6, d = 3)  #SD     
+        }
+      }
+    }
+    
+  }
+  
+  
+  cat("\n\n\t", "Mean and Covariance matrix Items (phi,lambda)", "\n")
+  cat("\n\t", "--- Population Mean Item ---", "\n")
+  cat("\t", "mu_phi", " ", "SD", "\t", "mu_lambda", " ", "SD", "\n\t")
+  for (jj in c(1, 2)) {
+    printF(x$pdiscr[jj], w = 6, d = 3)
+    cat("\t")
+    printF(x$sepdiscr[jj], w = 6, d = 3)
+    cat("\t")
+  }
+  cat("\n\n\t", "--- Covariance matrix Items ---", "\n")
+  cat("\t", "phi", "\t", "SD", "\t", "Cov", "\t", "SD", "\t", "lambda", " ", "SD", "\n\t")
+  for (jj in c(1, 2, 4)) {
+    printF(x$pSdiscr[jj], w = 6, d = 3)
+    cat("\t")
+    printF(x$sepSdiscr[jj], w = 6, d = 3)
+    cat("\t")
+  }
+  
+  
+  cat("\n\n\t", "Mean and Covariance matrix Persons", "\n")
+  cat("\n\t", "--- Population Mean Person ---", "\n")
+  cat("\t", "mu_P", "\t", "SD", "\n\t")
+  for (jj in c(1)) {
+    printF(x$ppers[jj], w = 6, d = 2)
+    cat("\t")
+    printF(x$seppers[jj], w = 6, d = 2)
+    cat("\t")
+  }
+  cat("\n\n\t", "--- Covariance matrix Person ---", "\n")
+  cat("\t", "Sigma_P", "\t", "SD", "\n\t")
+  for (jj in c(1)) {
+    printF(x$pSpers[jj], w = 6, d = 3)
+    cat("\t")
+    printF(x$sepSpers[jj], w = 6, d = 3)
+    cat("\t")
+  }
+  
+  if ((x$gammamodel) && (ncol(x$Mnug) == 1)) {
+    cat("\n\n\t", "--- Shape Parameter Gamma ---", "\n")
+    cat("\t", "EAP", "\t", "SD", "\n\t")
+    printF(x$estnug, w = 6, d = 3)
+    cat("\t")
+    printF(x$seestnug[jj], w = 6, d = 3)
+    cat("\t")
+  }
+  
+  
+  if ("lZP" %in% names(x)) {
+    
+    cat("\n\n\n\t", "*** Person Fit Analysis ***", "\n")
+    
+    # Percentage Aberrant lZP3
+    cat("\n\t", "Percentage Outliers Persons (5% level)", "\n")
+    cat("\n\t", "lZ", "\n")
+    cat("\t", round(100 * sum(x$lZP < 0.05)/N, 2), "%", "\t\n")
+    cat("\t 95% Posterior Probability: ", round(100 * sum(x$EAPCP > 0.95)/N, 2), "%", "\t\n")
+    
+    
+    # Percentage Persons (Estimation Group, Aberrant Group)
+    
+    # cat('\n\t', 'Percentage Persons (Estimation Group, Aberrant Group) (5% level)','\n') cat('\n\t', 'Estimation Group', '\t',
+    # 'Aberrant','\n') cat('\t',100*round(apply(x$Mingroup,2,mean)[1],3),'\t\t\t',100*round(apply(x$Mingroup,2,mean)[2],3),'\t\n')
+    
+    
+    cat("\n\n\t", "*** Item Fit Analysis ***", "\n")
+    
+    cat("\n\t", "Misfitting Items (5% level)", "\n")
+    set <- which(x$lZI < 0.05)
+    if (length(set >= 1)) {
+      cat("\n\t", "lI", "\n")
+      cat("\t", set, "\t\n")
+    } else {
+      cat("\t", "No Misfitting Items", "\t\n")
+    }
+    
+    cat("\n\t", "*** Residual Analysis ***", "\n")
+    set <- which(x$EAPresid > 0.95)
+    if (length(set >= 1)) {
+      cat("\n\t", "Percentage Extreme Residuals (.95 Posterior Probability)", "\n")
+      cat("\t", round(100 * length(set)/x$N, 4), "%", "\t\n")
+      
+      ## Identify Extremes
+      set <- which(x$EAPresid > 0.95)
+      set <- cbind((set%%x$N), (floor(set/x$N) + 1), exp(x$RT[set]))
+      dd <- order(set[, 1])
+      colnames(set) <- c("Person", "Item", " RT ")
+      rownames(set) <- rep(c(""), nrow(set))
+      
+      cat("\n\t", "Extreme Residuals", "\n")
+      cat("\t", "Person", " Item", "\t", " RT ", "\n")
+      for (jj in dd) {
+        cat("\t")
+        printF(set[jj, 1], w = 6, d = 0)
+        cat("\t")
+        printF(set[jj, 2], w = 6, d = 0)
+        cat("\t")
+        printF(set[jj, 3], w = 8, d = 4)
+        cat("\n")
+      }
+      cat("\n\t", "Kolmogorov Smirnov Test (5% level)", "\n")
+      cat("\t", round(100 * length(which(x$EAPKS < 0.05)))/x$K, "%", "of items has non-lognormally distributed residuals", "\t\n")
+      set <- which(x$EAPKS < 0.05)
+      if (length(set) > 0) {
+        cat("\t", "Item", "\t P-value ", "\n")
+        for (jj in 1:length(set)) {
+          cat("\t")
+          printF(set[jj], w = 6, d = 0)
+          cat("\t")
+          printF(x$EAPKS[set[jj]], w = 6, d = 3)
+          cat("\n")
+        }
+      }
+    } else {
+      cat("\t", "No Extreme Residuals", "\t\n")
+      cat("\n\t", "Kolmogorov Smirnov Test (5% level)", "\n")
+      cat("\t", round(100 * length(which(x$EAPKS < 0.05)))/x$K, "%", "\t\n")
+      set <- which(x$EAPKS < 0.05)
+      if (length(set) > 0) {
+        cat("\t", "Item", "\t P-value ", "\n")
+        for (jj in 1:length(set)) {
+          cat("\t")
+          printF(set[jj], w = 6, d = 0)
+          cat("\t")
+          printF(x$EAPKS[set[jj]], w = 6, d = 3)
+          cat("\n")
+        }
+      }
+    }
+  }
+  cat("\n\n")
+   
+}
