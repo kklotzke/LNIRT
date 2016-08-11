@@ -187,7 +187,7 @@ summaryIRT <- function(out, data) {
     
     
     
-    if (object$guess) {
+    if (Quess) {
         
         if (simv) {
             cat("\n\n\t", "Guessing Parameter", "\n")
@@ -195,9 +195,9 @@ summaryIRT <- function(out, data) {
             for (ii in 1:K) {
                 cat("\n\t", ii, "\t")
                 # Guessing Parameter
-                printF(iguess[ii], w = 6, d = 3)  # EAP
+                printF(guess[ii], w = 6, d = 3)  # EAP
                 cat("\t")
-                printF(seiguess[ii], w = 6, d = 3)  # SD
+                printF(seguess[ii], w = 6, d = 3)  # SD
                 cat("\t")
                 printF(data$quess[ii], w = 6, d = 3)  # true value
             }
@@ -207,9 +207,9 @@ summaryIRT <- function(out, data) {
             for (ii in 1:K) {
                 cat("\n\t", ii, "\t")
                 # Guessing Parameter
-                printF(iguess[ii], w = 6, d = 3)  # EAP
+                printF(guess[ii], w = 6, d = 3)  # EAP
                 cat("\t")
-                printF(seiguess[ii], w = 6, d = 3)  # SD
+                printF(seguess[ii], w = 6, d = 3)  # SD
             }
         }
     }
