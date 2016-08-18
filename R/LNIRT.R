@@ -43,18 +43,18 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
     K <- ncol(Y)
     
     ## population theta (ability - speed)
-    theta <- matrix(rnorm(N * 2), ncol = 2)
-    muP <- matrix(0, N, 2)
-    SigmaP <- diag(2)
+    theta <- matrix(rnorm(N * 2), ncol = 2) # 1: ability, 2: speed
+    muP <- matrix(0, N, 2) # Mean estimates for person parameters 
+    SigmaP <- diag(2) # Person covariance matrix
     muP0 <- matrix(0, 1, 2)
     SigmaP0 <- diag(2)
     
     ## population item (ability - speed)
-    ab <- matrix(rnorm(K * 4), ncol = 4)
+    ab <- matrix(rnorm(K * 4), ncol = 4) # 1: item discrimination 2: item difficulty 3: time discriminiation 4: time intensity
     ab[, c(1, 3)] <- 1
-    muI <- t(matrix(rep(c(1, 0), 2 * K), ncol = K))
+    muI <- t(matrix(rep(c(1, 0), 2 * K), ncol = K)) # Mean estimates for item parameters 
     muI0 <- muI[1, ]
-    SigmaI <- diag(4)
+    SigmaI <- diag(4) # Item covariance matrix
     SigmaI0 <- diag(4)/10
     for (ii in 1:4) {
         SigmaI0[ii, ] <- SigmaI0[ii, ] * rep(c(0.5, 3), 2)
@@ -113,10 +113,12 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
     EAPSigmaI <- 1
     iis <- 1
     
+    # Indicate which responses are missing
     D <- matrix(1, ncol = 1, nrow = N * K)
     D[which(is.na(Y))] <- 0
     D <- matrix(D, nrow = N, ncol = K)
     
+    # Indicate which RT's are missing
     DT <- matrix(1, ncol = 1, nrow = N * K)
     DT[which(is.na(RT))] <- 0
     DT <- matrix(DT, nrow = N, ncol = K)
@@ -127,8 +129,8 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
     
     ## Start MCMC algorithm
     
-    for (ii in 1:XG) {
-        if (sum(DT == 0) > 0) {
+    for (ii in 1:XG) { # For each iteration
+        if (sum(DT == 0) > 0) { # Simulate missing RT's 
             if (WL) {
                 RT <- SimulateRT(RT = RT, zeta = theta[, 2], lambda = ab[, 4], phi = rep(1, K), sigma2 = sigma2, DT = DT)
             } else {
@@ -136,8 +138,8 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             }
         }
         # ability test
-        if (PNO) {
-            if (sum(D == 0) > 0) {
+        if (PNO) { # If guessing
+            if (sum(D == 0) > 0) { # Simulate missing responses 
                 Y <- SimulateY(Y = Y, theta = theta[, 1], alpha0 = ab[, 1], beta0 = ab[, 2], guess0 = guess0, D = D)
             }
             if (par1) {
@@ -155,6 +157,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             }
         }
         
+        # Draw ability parameter 
         dum <- Conditional(1, muP, SigmaP, theta)
         if (par1) {
             theta[, 1] <- DrawTheta_LNIRT(alpha0 = ab[, 1], beta0 = ab[, 2] * ab[, 1], Z = ZR, mu = dum$CMU, sigma = dum$CVAR)
@@ -166,6 +169,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             theta[, 1] <- theta[, 1] - mean(theta[, 1])
         }
         
+        # Draw speed parameter 
         dum <- Conditional(2, muP, SigmaP, theta)
         if (par1) {
             theta[, 2] <- DrawZeta_LNIRT(RT = RT, phi = ab[, 3], lambda = ab[, 3] * ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
@@ -173,25 +177,28 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             theta[, 2] <- DrawZeta_LNIRT(RT = RT, phi = ab[, 3], lambda = ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
         }
         
+        # Rescale for identification
         if (ident == 2) {
-            # rescale for identification
             theta[, 2] <- theta[, 2] - mean(theta[, 2])
         }
         
-        MT[1:N, 1:2] <- MT[1:N, 1:2] + theta
-        MT2[1:N, 1:2] <- MT2[1:N, 1:2] + theta^2
+        MT[1:N, 1:2] <- MT[1:N, 1:2] + theta # for theta
+        MT2[1:N, 1:2] <- MT2[1:N, 1:2] + theta^2 # for sd(theta) 
         
+        # Draw guessing parameter from beta distribution
         if (PNO) {
             guess0 <- DrawC_LNIRT(S = SR, Y = Y)
         }
         Mguess[ii, ] <- guess0
         
+        # ab - 1: item discrimination 2: item difficulty 3: time discriminiation 4: time intensity
         if (WL) {
             ab1 <- cbind(ab[, 1], ab[, 2], 1/sqrt(sigma2), ab[, 4])
         } else {
             ab1 <- ab
         }
         
+        # Draw item discrimination parameter
         if (discr) {
             dum <- Conditional(kk = 1, Mu = muI, Sigma = SigmaI, Z = ab1)  #discrimination
             if (par1 == 1) {
@@ -210,6 +217,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             ab1 <- ab
         }
         
+        # Draw item difficulty parameter
         if (diffc) {
             dum <- Conditional(kk = 2, Mu = muI, Sigma = SigmaI, Z = ab1)  #difficulty
             if (par1 == 1) {
@@ -228,6 +236,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             ab[, 2] <- ab[, 2] - mean(ab[, 2])
         }
         
+        # Draw time discrimination parameter
         if ((WL) | (td)) {
             # no time discrimination, 1/(sqrt(error variance)) = discrimination on MVN prior
             ab[, 3] <- 1
@@ -244,6 +253,8 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         } else {
             ab1 <- ab
         }
+        
+        # Draw time intensity parameter
         dum <- Conditional(kk = 4, Mu = muI, Sigma = SigmaI, Z = ab1)  #time intensity
         ab[, 4] <- DrawLambda_LNIRT(RT, ab[, 3], theta[, 2], sigma2, dum$CMU, dum$CVAR)$lambda
         # if(par1==1){ ab[,4] <- ab[,4]/ab[,3] } rescale for identification
@@ -252,6 +263,9 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         }
         
         MAB[ii, 1:K, 1:4] <- ab
+        
+        # WL: Measurement error variance for time discrimination
+        # Else: Measurement error variance for time term 
         sigma2 <- SampleS2_LNIRT(RT = RT, zeta = theta[, 2], lambda = ab[, 4], phi = ab[, 3])
         if (WL) {
             Msigma2[ii, 1:K] <- 1/sqrt(sigma2)
@@ -259,11 +273,13 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             Msigma2[ii, 1:K] <- sigma2
         }
         
+        # Population mean estimate for person ability and speed
         X <- matrix(1, N, 1)
         muP <- SampleB_LNIRT(theta, X, SigmaP, muP0, SigmaP0)
         MmuP[ii, ] <- muP$B
         muP <- muP$pred
         
+        # Covariance matrix person parameters
         SS <- crossprod(theta - muP) + SigmaP0
         SigmaP <- rwishart_LNIRT(2 + N, chol2inv(chol(SS)))$IW
         MSP[ii, , ] <- SigmaP
@@ -274,6 +290,9 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         } else {
             ab1 <- ab
         }
+        
+        # Population mean estimates for item parameters 
+        # 1: item discrimination 2: item difficulty 3: time discrimination 4: time intensity
         muI2 <- SampleB_LNIRT(Y = ab1, X = X, Sigma = SigmaI, B0 = muI0, V0 = SigmaI0)
         if (ident == 2) {
             MmuI[ii, c(1, 2, 3, 4)] <- muI2$B[c(1, 2, 3, 4)]
@@ -282,6 +301,8 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             MmuI[ii, c(1, 3)] <- muI2$B[c(1, 3)]
             muI[, c(1, 3)] <- muI2$pred[, c(1, 3)]
         }
+        
+        # Covariance matrix item parameters
         muI1 <- matrix(muI, ncol = 4, nrow = K, byrow = FALSE)
         SS <- crossprod(ab1 - muI1) + SigmaI0
         SigmaI <- rwishart_LNIRT(4 + K, chol2inv(chol(SS)))$IW
@@ -374,8 +395,8 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
     }
     
     
-    MT <- MT/XG
-    MT2 <- sqrt(MT2/XG - MT^2)
+    MT <- MT/XG # Posterior mean theta
+    MT2 <- sqrt(MT2/XG - MT^2) # Posterior mean sd(theta)
     
     if (ii > 1000) {
         if (residual) {
