@@ -2,6 +2,11 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #'@export
+Rcpp_DrawC_LNIRT <- function(S, Y) {
+    .Call('LNIRT_Rcpp_DrawC_LNIRT', PACKAGE = 'LNIRT', S, Y)
+}
+
+#'@export
 rcpp_hello <- function() {
     .Call('LNIRT_rcpp_hello', PACKAGE = 'LNIRT')
 }

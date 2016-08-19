@@ -229,6 +229,7 @@ DrawC_LNIRT <- function(S, Y) {
     Q1 <- 20 + apply((S == 0) * (Y == 1), 2, sum)  #answer unknown and guess correctly
     Q2 <- 80 + apply(S == 0, 2, sum)  #answer unknown
     guess <- rbeta(K, Q1, Q2)
+    
     return(guess)
 }
 
