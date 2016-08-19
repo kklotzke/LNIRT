@@ -7,7 +7,10 @@ Maintainer: Konrad Klotzke <omd.bms.utwente.stats@gmail.com>
 Imports:
     MASS,
     stats,
-    utils
+    utils,
+    Rcpp (>= 0.12.6)
+LinkingTo: 
+    Rcpp
 Description: LogNormal Response Time Item Response Theory Models
 License: GPL-2 | GPL-3
 LazyData: TRUE

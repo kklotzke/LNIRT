@@ -2,6 +2,8 @@
 #' @importFrom stats ks.test pchisq pgamma pnorm qnorm rbeta
 #' rbinom rchisq rgamma rlnorm rnorm runif var
 #' @importFrom utils flush.console
+#' @importFrom Rcpp evalCpp
+#' @useDynLib LNIRT
 
 #' @export
 LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, WL = FALSE, td = FALSE, alpha, beta) {
