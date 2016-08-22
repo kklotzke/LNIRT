@@ -17,6 +17,11 @@ Rcpp_DrawTheta_LNIRT <- function(alpha0, beta0, Z, mu, sigma) {
 }
 
 #'@export
+Rcpp_DrawZeta_LNIRT <- function(RT, phi, lambda, sigma2, mu, sigmaz) {
+    .Call('LNIRT_Rcpp_DrawZeta_LNIRT', PACKAGE = 'LNIRT', RT, phi, lambda, sigma2, mu, sigmaz)
+}
+
+#'@export
 Rcpp_DrawC_LNIRT <- function(S, Y) {
     .Call('LNIRT_Rcpp_DrawC_LNIRT', PACKAGE = 'LNIRT', S, Y)
 }

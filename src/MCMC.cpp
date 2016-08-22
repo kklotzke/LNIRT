@@ -94,17 +94,49 @@ arma::vec Rcpp_DrawTheta_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, 
   
   arma::vec tmp = sum(pow(alpha0, 2));
   const double pvar = tmp(0) + 1 / sigma;
+  const double sqrtpvar = sqrt(1/pvar);
   arma::vec thetahat = (Z + b0) * alpha0;
-  arma::vec mutmp = ((thetahat + mu) / sigma) / pvar;
-  
+  arma::vec mutmp = (thetahat + mu / sigma) / pvar;
   arma::vec theta(N);
   for (int i = 0; i < N; i++) {
-    arma::vec tmp = rnorm(1, mutmp(i), sqrt(1/pvar));
+    arma::vec tmp = rnorm(1, mutmp(i), sqrtpvar);
     theta(i) = tmp(0);
   }
   
   return (theta);
 }
+
+
+
+//'@export
+// [[Rcpp::export]]
+arma::vec Rcpp_DrawZeta_LNIRT(const arma::mat &RT, const arma::vec &phi, const arma::vec &lambda,
+                              const arma::vec &sigma2, const arma::vec &mu, const double sigmaz) {
+  const int N = RT.n_rows;
+  const int K = RT.n_cols;
+  
+  arma::mat l0(K, N);
+  for (int i = 0; i < N; i++) {
+    l0.col(i) = lambda;
+  }
+  
+  arma::mat Z = l0 - RT.t();
+  arma::mat sigma2inv = arma::diagmat(1 / sigma2);
+  arma::mat ee(phi.t() * sigma2inv);
+  arma::mat tmp = 1 / (ee * phi +  1 / sigmaz);
+  
+  const double vartheta = tmp(0, 0);
+  const double sqrtvartheta = sqrt(vartheta); 
+  arma::mat meantheta((ee * Z + (mu.t() / sigmaz)) * vartheta);
+  arma::vec zeta(N);
+  for (int i = 0; i < N; i++) {
+    arma::vec tmp2 = rnorm(1, meantheta(i), sqrtvartheta);
+    zeta(i) = tmp2(0);
+  }
+  
+  return (zeta);
+}
+
 
 
 //'@export
