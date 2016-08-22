@@ -38,6 +38,21 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// Rcpp_DrawTheta_LNIRT
+arma::vec Rcpp_DrawTheta_LNIRT(const arma::vec& alpha0, const arma::vec& beta0, const arma::mat& Z, const arma::vec& mu, const double sigma);
+RcppExport SEXP LNIRT_Rcpp_DrawTheta_LNIRT(SEXP alpha0SEXP, SEXP beta0SEXP, SEXP ZSEXP, SEXP muSEXP, SEXP sigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::vec& >::type alpha0(alpha0SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type beta0(beta0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const double >::type sigma(sigmaSEXP);
+    __result = Rcpp::wrap(Rcpp_DrawTheta_LNIRT(alpha0, beta0, Z, mu, sigma));
+    return __result;
+END_RCPP
+}
 // Rcpp_DrawC_LNIRT
 arma::fvec Rcpp_DrawC_LNIRT(const arma::mat& S, const arma::mat& Y);
 RcppExport SEXP LNIRT_Rcpp_DrawC_LNIRT(SEXP SSEXP, SEXP YSEXP) {

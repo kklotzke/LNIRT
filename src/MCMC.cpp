@@ -21,13 +21,13 @@ List Rcpp_DrawS_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, const arm
   arma::mat randS(runif(N * K));
   randS.reshape(N, K);
   
-  for(int i = 0; i < N; i++) {
+  for (int i = 0; i < N; i++) {
     arma::vec eta = (alpha0 * theta0(i) - beta0);
     arma::vec probEta(pnorm(as<NumericVector>(wrap(eta)), 0.0, 1.0, 1, 0)); // eta, mu, sd, lower.tail, log.p
     arma::vec probS = probEta / (probEta + guess0 % (1 - probEta));
     arma::vec res(K);
     res.fill(1);
-    for(int j = 0; j < K; j++) {
+    for (int j = 0; j < K; j++) {
       if(randS(i, j) > probS(j))
         res(j) = 0;
     }
@@ -52,9 +52,9 @@ arma::mat Rcpp_DrawZ_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, cons
   arma::mat randU(runif(N * K));
   randU.reshape(N, K);
 
-  for(int i = 0; i < N; i++) {
+  for (int i = 0; i < N; i++) {
     arma::vec personEta(K);
-    if(PNO)
+    if (PNO)
       personEta = eta.row(i).t();
     else
       personEta = (alpha0 * theta0(i) - beta0);
@@ -64,18 +64,46 @@ arma::mat Rcpp_DrawZ_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, cons
     BB.elem(find(BB > (1 - 1e-05))).fill(1 - 1e-05);
     arma::vec tt = (BB % (1 - S.row(i).t()) + (1 - BB) % S.row(i).t()) % randU.row(i).t() + BB % S.row(i).t();
     
-    for(int j = 0; j < K; j++) {
-      if(D(i, j) == 1) {
+    for (int j = 0; j < K; j++) {
+      if (D(i, j) == 1) {
         arma::vec tmp(qnorm(as<NumericVector>(wrap(tt(j))), 0.0, 1.0, 1, 0));
         Z(i, j) = tmp(0) + personEta(j);
       }
-      else if(D(i, j) == 0) {
+      else if (D(i, j) == 0) {
         arma::vec tmp(rnorm(1, 0.0, 1.0));
         Z(i, j) = tmp(0) + personEta(j);
       }
     }
   }
   return(Z);
+}
+
+
+
+//'@export
+// [[Rcpp::export]]
+arma::vec Rcpp_DrawTheta_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, const arma::mat &Z,
+                               const arma::vec &mu, const double sigma) {
+  const int N = Z.n_rows;
+  const int K = Z.n_cols;
+  
+  arma::mat b0(N, K);
+  for (int i = 0; i < N; i++) {
+    b0.row(i) = beta0.t();
+  }
+  
+  arma::vec tmp = sum(pow(alpha0, 2));
+  const double pvar = tmp(0) + 1 / sigma;
+  arma::vec thetahat = (Z + b0) * alpha0;
+  arma::vec mutmp = ((thetahat + mu) / sigma) / pvar;
+  
+  arma::vec theta(N);
+  for (int i = 0; i < N; i++) {
+    arma::vec tmp = rnorm(1, mutmp(i), sqrt(1/pvar));
+    theta(i) = tmp(0);
+  }
+  
+  return (theta);
 }
 
 
