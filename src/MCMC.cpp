@@ -11,8 +11,41 @@ using namespace Rcpp;
 
 //'@export
 // [[Rcpp::export]]
-arma::mat Rcpp_DrawS_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, const arma::vec &guess0, 
+List Rcpp_DrawS_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, const arma::vec &guess0, 
                            const arma::vec &theta0, const arma::mat &Y) {
+  const int N = Y.n_rows;
+  const int K = Y.n_cols;
+  arma::mat S(N, K);
+  arma::mat etamat(N, K);
+  
+  arma::mat randS(runif(N * K));
+  randS.reshape(N, K);
+  
+  for (int i = 0; i < N; i++) {
+    arma::vec eta = (alpha0 * theta0(i) - beta0);
+    arma::vec probEta(pnorm(as<NumericVector>(wrap(eta)), 0.0, 1.0, 1, 0)); // eta, mu, sd, lower.tail, log.p
+    arma::vec probS = probEta / (probEta + guess0 % (1 - probEta));
+    arma::vec res(K);
+    res.fill(1);
+    for(int j = 0; j < K; j++) {
+      if(randS(i, j) > probS(j))
+        res(j) = 0;
+    }
+    
+    S.row(i) = res.t();
+    etamat.row(i) = eta.t();
+  }
+  
+  List ret; ret["S"] = S % Y; ret["eta"] = etamat;
+  return(ret);
+}
+
+
+/*
+//'@export
+// [[Rcpp::export]]
+arma::mat Rcpp_DrawZ_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, const arma::vec &theta0, 
+                           const arma::mat &S, const arma::mat &D) {
   const int N = Y.n_rows;
   const int K = Y.n_cols;
   arma::mat S(N, K);
@@ -37,6 +70,7 @@ arma::mat Rcpp_DrawS_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, cons
   return(S % Y);
 }
 
+*/
 
 //'@export
 // [[Rcpp::export]]

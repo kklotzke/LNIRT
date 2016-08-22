@@ -7,7 +7,7 @@
 using namespace Rcpp;
 
 // Rcpp_DrawS_LNIRT
-arma::mat Rcpp_DrawS_LNIRT(const arma::vec& alpha0, const arma::vec& beta0, const arma::vec& guess0, const arma::vec& theta0, const arma::mat& Y);
+List Rcpp_DrawS_LNIRT(const arma::vec& alpha0, const arma::vec& beta0, const arma::vec& guess0, const arma::vec& theta0, const arma::mat& Y);
 RcppExport SEXP LNIRT_Rcpp_DrawS_LNIRT(SEXP alpha0SEXP, SEXP beta0SEXP, SEXP guess0SEXP, SEXP theta0SEXP, SEXP YSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
