@@ -7,6 +7,11 @@ Rcpp_DrawS_LNIRT <- function(alpha0, beta0, guess0, theta0, Y) {
 }
 
 #'@export
+Rcpp_DrawZ_LNIRT <- function(alpha0, beta0, theta0, S, D, eta, PNO = FALSE) {
+    .Call('LNIRT_Rcpp_DrawZ_LNIRT', PACKAGE = 'LNIRT', alpha0, beta0, theta0, S, D, eta, PNO)
+}
+
+#'@export
 Rcpp_DrawC_LNIRT <- function(S, Y) {
     .Call('LNIRT_Rcpp_DrawC_LNIRT', PACKAGE = 'LNIRT', S, Y)
 }
