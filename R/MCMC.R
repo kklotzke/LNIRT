@@ -1,7 +1,7 @@
 ### Common functions used in MCMC ###
 
 Conditional <- function(kk, Mu, Sigma, Z) {
-    
+
     K <- ncol(Z)
     N <- nrow(Z)
     
@@ -197,7 +197,7 @@ DrawZ_LNIRT <- function(alpha0, beta0, theta0, S, D) {
 
 
 DrawTheta_LNIRT <- function(alpha0, beta0, Z, mu, sigma) {
-    
+
     N <- nrow(Z)
     K <- ncol(Z)
     pvar <- (sum(alpha0^2) + 1/as.vector(sigma))
@@ -234,7 +234,7 @@ DrawC_LNIRT <- function(S, Y) {
 }
 
 DrawBeta_LNIRT <- function(theta, alpha, Z, mu, sigma) {
-    
+
     # prior mu,sigma
     N <- nrow(Z)
     K <- ncol(Z)
@@ -247,7 +247,7 @@ DrawBeta_LNIRT <- function(theta, alpha, Z, mu, sigma) {
     betahat <- diag(t(XX) %*% Z)
     mu <- (betahat + mu/sigma[1, 1])/pvar
     beta <- rnorm(K, mean = mu, sd = sqrt(1/pvar))
-    
+
     return(beta)
 }
 
