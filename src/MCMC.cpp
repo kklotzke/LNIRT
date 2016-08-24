@@ -1,7 +1,7 @@
 // [[Rcpp::depends(RcppArmadillo)]] 
 
-#include <RcppArmadillo.h>
-#include <Rcpp.h>
+#include "RcppArmadillo.h"
+#include "MCMC.h"
 using namespace Rcpp;
 
 
@@ -44,7 +44,7 @@ List Rcpp_DrawS_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, const arm
 //'@export
 // [[Rcpp::export]]
 arma::mat Rcpp_DrawZ_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, const arma::vec &theta0, 
-                           const arma::mat &S, const arma::mat &D, const arma::mat &eta, const bool PNO = false) {
+                           const arma::mat &S, const arma::mat &D, const arma::mat &eta, const bool PNO) {
   const int N = S.n_rows;
   const int K = S.n_cols;
   
@@ -195,5 +195,75 @@ arma::vec Rcpp_DrawBeta_LNIRT(const arma::vec &theta, const arma::vec &alpha, co
   }
   
   return (beta);
+}
+
+
+
+//'@export
+// [[Rcpp::export]]
+arma::vec Rcpp_DrawLambda_LNIRT(const arma::mat &RT, const arma::vec &phi, const arma::vec &zeta, const arma::vec &sigma2, 
+                                const arma::vec &mu, const double sigmal) {
+  const int N = RT.n_rows;
+  const int K = RT.n_cols;
+  
+  arma::mat Z0(N, K);
+  for (int i = 0; i < N; i++) {
+    Z0.row(i) = RT.row(i) + phi.t() * zeta(i);
+  }
+  arma::vec X(N);
+  X.fill(1);
+  
+  arma::mat sigma2diag = arma::diagmat(sigma2);
+  arma::mat sigmaldiag = arma::mat(K, K);
+  sigmaldiag.fill(0);
+  sigmaldiag.diag() += sigmal;
+  
+  List sampleB = Rcpp_SampleB_LNIRT(Z0, X, sigma2diag, mu, sigmaldiag);
+  arma::vec lambda = as<arma::vec>(sampleB["B"]);
+
+  return (lambda);
+}
+
+
+
+//'@export
+// [[Rcpp::export]]
+arma::vec Rcpp_DrawPhi_LNIRT(const arma::mat &RT, const arma::vec &lambda, const arma::vec &zeta, const arma::vec &sigma2, 
+                                const arma::vec &mu, const double sigmal) {
+  const int N = RT.n_rows;
+  const int K = RT.n_cols;
+  
+  arma::mat Z0(N, K);
+  for (int i = 0; i < N; i++) {
+    Z0.row(i) = -RT.row(i) + lambda.t();
+  }
+  arma::mat sigma2diag = arma::diagmat(sigma2);
+  arma::mat sigmaldiag = arma::mat(K, K);
+  sigmaldiag.fill(0);
+  sigmaldiag.diag() += sigmal;
+  
+  List sampleB = Rcpp_SampleB_LNIRT(Z0, zeta, sigma2diag, mu, sigmaldiag);
+  arma::vec phi = as<arma::vec>(sampleB["B"]);
+  
+  return (phi);
+}
+
+
+
+//'@export
+// [[Rcpp::export]]
+List Rcpp_SampleB_LNIRT(const arma::mat &Y, const arma::vec &X, const arma::mat &Sigma, const arma::vec &B0, 
+                                const arma::mat &V0) {
+  const int k = Y.n_cols;
+
+  arma::mat tmp = 1/(X.t() * X);
+  arma::mat Bvar = inv(inv(Sigma * tmp(0, 0)) + inv(V0));
+  arma::vec Btilde = Bvar * (inv(Sigma) * (X.t() * Y).t() + inv(V0) * B0);
+  arma::vec randN(rnorm(k, 0.0, 1.0));
+  arma::vec B = Btilde + chol(Bvar) * randN;
+  arma::mat pred = X * B.t();
+  
+  List ret; ret["B"] = B; ret["pred"] = pred;
+  return(ret);
 }
  

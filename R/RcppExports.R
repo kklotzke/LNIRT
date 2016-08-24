@@ -7,7 +7,7 @@ Rcpp_DrawS_LNIRT <- function(alpha0, beta0, guess0, theta0, Y) {
 }
 
 #'@export
-Rcpp_DrawZ_LNIRT <- function(alpha0, beta0, theta0, S, D, eta, PNO = FALSE) {
+Rcpp_DrawZ_LNIRT <- function(alpha0, beta0, theta0, S, D, eta, PNO) {
     .Call('LNIRT_Rcpp_DrawZ_LNIRT', PACKAGE = 'LNIRT', alpha0, beta0, theta0, S, D, eta, PNO)
 }
 
@@ -29,6 +29,21 @@ Rcpp_DrawC_LNIRT <- function(S, Y) {
 #'@export
 Rcpp_DrawBeta_LNIRT <- function(theta, alpha, Z, mu, sigma) {
     .Call('LNIRT_Rcpp_DrawBeta_LNIRT', PACKAGE = 'LNIRT', theta, alpha, Z, mu, sigma)
+}
+
+#'@export
+Rcpp_DrawLambda_LNIRT <- function(RT, phi, zeta, sigma2, mu, sigmal) {
+    .Call('LNIRT_Rcpp_DrawLambda_LNIRT', PACKAGE = 'LNIRT', RT, phi, zeta, sigma2, mu, sigmal)
+}
+
+#'@export
+Rcpp_DrawPhi_LNIRT <- function(RT, lambda, zeta, sigma2, mu, sigmal) {
+    .Call('LNIRT_Rcpp_DrawPhi_LNIRT', PACKAGE = 'LNIRT', RT, lambda, zeta, sigma2, mu, sigmal)
+}
+
+#'@export
+Rcpp_SampleB_LNIRT <- function(Y, X, Sigma, B0, V0) {
+    .Call('LNIRT_Rcpp_SampleB_LNIRT', PACKAGE = 'LNIRT', Y, X, Sigma, B0, V0)
 }
 
 #'@export
