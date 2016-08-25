@@ -228,6 +228,36 @@ arma::vec Rcpp_DrawLambda_LNIRT(const arma::mat &RT, const arma::vec &phi, const
 
 //'@export
 // [[Rcpp::export]]
+arma::vec Rcpp_DrawAlpha_LNIRT(const arma::vec &theta, const arma::vec &beta, const arma::mat &Z,
+                              const arma::vec &mu, const double sigma) {
+  const int N = Z.n_rows;
+  const int K = Z.n_cols;
+  
+  arma::mat b0(N, K);
+  arma::mat XX(N, K);
+  for (int i = 0; i < N; i++) {
+    b0.row(i) = beta.t();
+    XX.row(i) = theta(i) - b0.row(i);
+  }
+  
+  arma::mat tmp = (XX.t() * XX);
+  arma::vec pvar = tmp.diag() + 1 / sigma;
+  arma::vec sqrtpvar = sqrt(1 / pvar);
+  tmp = (XX.t() * Z);
+  arma::vec alphahat = tmp.diag();
+  arma::vec mu0 = (alphahat + mu / sigma) / pvar;
+  arma::vec alpha(K);
+  for (int i = 0; i < K; i++) {
+    alpha(i) = rnorm(1, mu0(i), sqrtpvar(i))(0);
+  }
+  
+  return (alpha);
+}
+
+
+
+//'@export
+// [[Rcpp::export]]
 arma::vec Rcpp_DrawPhi_LNIRT(const arma::mat &RT, const arma::vec &lambda, const arma::vec &zeta, const arma::vec &sigma2, 
                                 const arma::vec &mu, const double sigmal) {
   const int N = RT.n_rows;
