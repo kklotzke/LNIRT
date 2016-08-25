@@ -47,8 +47,18 @@ Rcpp_DrawPhi_LNIRT <- function(RT, lambda, zeta, sigma2, mu, sigmal) {
 }
 
 #'@export
+Rcpp_SampleS2_LNIRT <- function(RT, zeta, lambda, phi) {
+    .Call('LNIRT_Rcpp_SampleS2_LNIRT', PACKAGE = 'LNIRT', RT, zeta, lambda, phi)
+}
+
+#'@export
 Rcpp_SampleB_LNIRT <- function(Y, X, Sigma, B0, V0) {
     .Call('LNIRT_Rcpp_SampleB_LNIRT', PACKAGE = 'LNIRT', Y, X, Sigma, B0, V0)
+}
+
+#'@export
+Rcpp_rwishart_LNIRT <- function(nu, V) {
+    .Call('LNIRT_Rcpp_rwishart_LNIRT', PACKAGE = 'LNIRT', nu, V)
 }
 
 #'@export

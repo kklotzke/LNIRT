@@ -280,6 +280,35 @@ arma::vec Rcpp_DrawPhi_LNIRT(const arma::mat &RT, const arma::vec &lambda, const
 
 
 
+
+//'@export
+// [[Rcpp::export]]
+arma::vec Rcpp_SampleS2_LNIRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &lambda, 
+                              const arma::vec &phi) {
+  const int N = RT.n_rows;
+  const int K = RT.n_cols;
+  const int ss0 = 10;
+  
+  arma::mat Z0(N, K);
+  arma::vec colsum(K);
+  colsum.fill(0);
+  for (int i = 0; i < N; i++) {
+    Z0.row(i) = RT.row(i) + phi.t() * zeta(i) - lambda.t();
+    Z0.row(i) %= Z0.row(i); // % Z0.row(i);
+    
+    for (int j = 0; j < K; j++) {
+      colsum(j) += Z0(i, j); 
+    }
+  }
+ 
+ arma::vec randChisq(rchisq(K, N));
+ arma::vec sigma2 = (colsum + ss0) / randChisq;
+
+  return (sigma2);
+}
+
+
+
 //'@export
 // [[Rcpp::export]]
 List Rcpp_SampleB_LNIRT(const arma::mat &Y, const arma::vec &X, const arma::mat &Sigma, const arma::vec &B0, 
@@ -295,5 +324,44 @@ List Rcpp_SampleB_LNIRT(const arma::mat &Y, const arma::vec &X, const arma::mat 
   
   List ret; ret["B"] = B; ret["pred"] = pred;
   return(ret);
+}
+ 
+
+ 
+//'@export
+// [[Rcpp::export]] 
+arma::mat Rcpp_rwishart_LNIRT(const int nu, const arma::mat V) {
+  const int m = V.n_rows;
+  arma::vec df = (nu + nu - m + 1) - arma::regspace(nu - m + 1, nu);
+  arma::mat RT;
+  if (m > 1) {
+    arma::vec tmp(m);
+    for (int i = 0; i < m; i++) {
+      tmp(i) = sqrt(rchisq(1, df(i))(0));
+    }
+    RT = arma::diagmat(tmp); 
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < m; j++) {
+        if (i > j) {
+          RT(i, j) = rnorm(1, 0.0, 1.0)(0);
+        }
+      }
+    }
+  }
+  else {
+    RT = arma::mat(1, 1);
+    RT(0,0) = sqrt(rchisq(1, df(0))(0));
+  }
+  
+  arma::mat U = chol(V);
+  arma::mat C = arma::trimatu(RT.t() * U);
+  arma::mat tmp(m, m);
+  tmp.fill(0);
+  tmp.diag() += 1;
+  arma::mat CI = solve(C, tmp);
+  arma::mat IW = CI * CI.t();
+  
+  return (IW);
+
 }
  

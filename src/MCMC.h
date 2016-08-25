@@ -26,5 +26,9 @@ arma::vec Rcpp_DrawAlpha_LNIRT(const arma::vec &theta, const arma::vec &beta, co
 arma::vec Rcpp_DrawPhi_LNIRT(const arma::mat &RT, const arma::vec &lambda, const arma::vec &zeta, const arma::vec &sigma2, 
                              const arma::vec &mu, const double sigmal);
 
+arma::vec Rcpp_SampleS2_LNIRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &lambda, const arma::vec &phi);
+
 Rcpp::List Rcpp_SampleB_LNIRT(const arma::mat &Y, const arma::vec &X, const arma::mat &Sigma, const arma::vec &mu, 
                               const arma::mat &V0);
+
+arma::mat Rcpp_rwishart_LNIRT(const int nu, const arma::mat V);

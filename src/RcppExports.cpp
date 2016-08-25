@@ -143,6 +143,20 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// Rcpp_SampleS2_LNIRT
+arma::vec Rcpp_SampleS2_LNIRT(const arma::mat& RT, const arma::vec& zeta, const arma::vec& lambda, const arma::vec& phi);
+RcppExport SEXP LNIRT_Rcpp_SampleS2_LNIRT(SEXP RTSEXP, SEXP zetaSEXP, SEXP lambdaSEXP, SEXP phiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::mat& >::type RT(RTSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type zeta(zetaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type phi(phiSEXP);
+    __result = Rcpp::wrap(Rcpp_SampleS2_LNIRT(RT, zeta, lambda, phi));
+    return __result;
+END_RCPP
+}
 // Rcpp_SampleB_LNIRT
 List Rcpp_SampleB_LNIRT(const arma::mat& Y, const arma::vec& X, const arma::mat& Sigma, const arma::vec& B0, const arma::mat& V0);
 RcppExport SEXP LNIRT_Rcpp_SampleB_LNIRT(SEXP YSEXP, SEXP XSEXP, SEXP SigmaSEXP, SEXP B0SEXP, SEXP V0SEXP) {
@@ -155,6 +169,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type B0(B0SEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type V0(V0SEXP);
     __result = Rcpp::wrap(Rcpp_SampleB_LNIRT(Y, X, Sigma, B0, V0));
+    return __result;
+END_RCPP
+}
+// Rcpp_rwishart_LNIRT
+arma::mat Rcpp_rwishart_LNIRT(const int nu, const arma::mat V);
+RcppExport SEXP LNIRT_Rcpp_rwishart_LNIRT(SEXP nuSEXP, SEXP VSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const int >::type nu(nuSEXP);
+    Rcpp::traits::input_parameter< const arma::mat >::type V(VSEXP);
+    __result = Rcpp::wrap(Rcpp_rwishart_LNIRT(nu, V));
     return __result;
 END_RCPP
 }
