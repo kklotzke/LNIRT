@@ -1,5 +1,29 @@
 #include "RcppArmadillo.h"
 
+// Common functions used in MCMC
+
+
+arma::vec Rcpp_DrawZeta(const arma::mat &RT, const arma::vec &phi, const arma::vec &lambda,
+                        const arma::vec &sigma2, const arma::vec &mu, const double sigmaz);
+
+Rcpp::List Rcpp_SampleB(const arma::mat &Y, const arma::vec &X, const arma::mat &Sigma, const arma::vec &mu, 
+                        const arma::mat &V0);
+
+arma::mat Rcpp_rwishart(const int nu, const arma::mat V);
+
+
+// MCMC functions used in LNRT
+
+arma::vec Rcpp_SampleS_LNRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &lambda, const arma::vec &phi, 
+                            const arma::vec &ingroup);
+
+
+arma::vec Rcpp_DrawLambda_LNRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &sigma2, 
+                               const arma::vec &mu, const double sigma);
+
+
+// MCMC functions used in LNIRT 
+
 Rcpp::List Rcpp_DrawS_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, const arma::vec &guess0, 
                             const arma::vec &theta0, const arma::mat &Y);
 
@@ -8,9 +32,6 @@ arma::mat Rcpp_DrawZ_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, cons
 
 arma::vec Rcpp_DrawTheta_LNIRT(const arma::vec &alpha0, const arma::vec &beta0, const arma::mat &Z,
                                const arma::vec &mu, const double sigma);
-
-arma::vec Rcpp_DrawZeta_LNIRT(const arma::mat &RT, const arma::vec &phi, const arma::vec &lambda,
-                              const arma::vec &sigma2, const arma::vec &mu, const double sigmaz);
 
 arma::fvec Rcpp_DrawC_LNIRT(const arma::mat &S, const arma::mat &Y);
 
@@ -28,7 +49,3 @@ arma::vec Rcpp_DrawPhi_LNIRT(const arma::mat &RT, const arma::vec &lambda, const
 
 arma::vec Rcpp_SampleS2_LNIRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &lambda, const arma::vec &phi);
 
-Rcpp::List Rcpp_SampleB_LNIRT(const arma::mat &Y, const arma::vec &X, const arma::mat &Sigma, const arma::vec &mu, 
-                              const arma::mat &V0);
-
-arma::mat Rcpp_rwishart_LNIRT(const int nu, const arma::mat V);

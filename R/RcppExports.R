@@ -2,6 +2,31 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #'@export
+Rcpp_DrawZeta <- function(RT, phi, lambda, sigma2, mu, sigmaz) {
+    .Call('LNIRT_Rcpp_DrawZeta', PACKAGE = 'LNIRT', RT, phi, lambda, sigma2, mu, sigmaz)
+}
+
+#'@export
+Rcpp_SampleB <- function(Y, X, Sigma, B0, V0) {
+    .Call('LNIRT_Rcpp_SampleB', PACKAGE = 'LNIRT', Y, X, Sigma, B0, V0)
+}
+
+#'@export
+Rcpp_rwishart <- function(nu, V) {
+    .Call('LNIRT_Rcpp_rwishart', PACKAGE = 'LNIRT', nu, V)
+}
+
+#'@export
+Rcpp_SampleS_LNRT <- function(RT, zeta, lambda, phi, ingroup) {
+    .Call('LNIRT_Rcpp_SampleS_LNRT', PACKAGE = 'LNIRT', RT, zeta, lambda, phi, ingroup)
+}
+
+#'@export
+Rcpp_DrawLambda_LNRT <- function(RT, zeta, sigma2, mu, sigma) {
+    .Call('LNIRT_Rcpp_DrawLambda_LNRT', PACKAGE = 'LNIRT', RT, zeta, sigma2, mu, sigma)
+}
+
+#'@export
 Rcpp_DrawS_LNIRT <- function(alpha0, beta0, guess0, theta0, Y) {
     .Call('LNIRT_Rcpp_DrawS_LNIRT', PACKAGE = 'LNIRT', alpha0, beta0, guess0, theta0, Y)
 }
@@ -14,11 +39,6 @@ Rcpp_DrawZ_LNIRT <- function(alpha0, beta0, theta0, S, D, eta, PNO) {
 #'@export
 Rcpp_DrawTheta_LNIRT <- function(alpha0, beta0, Z, mu, sigma) {
     .Call('LNIRT_Rcpp_DrawTheta_LNIRT', PACKAGE = 'LNIRT', alpha0, beta0, Z, mu, sigma)
-}
-
-#'@export
-Rcpp_DrawZeta_LNIRT <- function(RT, phi, lambda, sigma2, mu, sigmaz) {
-    .Call('LNIRT_Rcpp_DrawZeta_LNIRT', PACKAGE = 'LNIRT', RT, phi, lambda, sigma2, mu, sigmaz)
 }
 
 #'@export
@@ -49,16 +69,6 @@ Rcpp_DrawPhi_LNIRT <- function(RT, lambda, zeta, sigma2, mu, sigmal) {
 #'@export
 Rcpp_SampleS2_LNIRT <- function(RT, zeta, lambda, phi) {
     .Call('LNIRT_Rcpp_SampleS2_LNIRT', PACKAGE = 'LNIRT', RT, zeta, lambda, phi)
-}
-
-#'@export
-Rcpp_SampleB_LNIRT <- function(Y, X, Sigma, B0, V0) {
-    .Call('LNIRT_Rcpp_SampleB_LNIRT', PACKAGE = 'LNIRT', Y, X, Sigma, B0, V0)
-}
-
-#'@export
-Rcpp_rwishart_LNIRT <- function(nu, V) {
-    .Call('LNIRT_Rcpp_rwishart_LNIRT', PACKAGE = 'LNIRT', nu, V)
 }
 
 #'@export
