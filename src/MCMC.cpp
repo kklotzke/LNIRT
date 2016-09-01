@@ -100,6 +100,52 @@ arma::mat Rcpp_rwishart(const int nu, const arma::mat V) {
 // MCMC functions used in LNRT
 
 //'@export
+// [[Rcpp::export]] 
+Rcpp::List Rcpp_DrawLambdaPhi_LNRT(const arma::mat &RT, const arma::vec &theta, const arma::vec &sigma2, 
+                             const arma::mat muI, const arma::mat sigmaI, const arma::vec ingroup) {
+  const int N = RT.n_rows;
+  const int K = RT.n_cols;
+  
+  arma::mat invSigmaI = inv(sigmaI);
+  arma::mat H(N, 2);
+  H.col(0) = -theta % ingroup;
+  H.col(1) = ingroup;
+  
+  arma::mat tmp1 = arma::diagmat(1 / sigma2);
+  arma::mat tmp2 = H.t() * H;
+  arma::vec ones(K);
+  ones.fill(1);
+  arma::mat diagones = arma::diagmat(ones);
+  arma::mat varest = inv(kron(tmp1, tmp2) + kron(diagones, invSigmaI)); 
+  
+  tmp1 = H.t() * RT;
+  tmp2 = arma::repmat(sigma2.t(), 2, 1);
+  arma::mat tmp3 = arma::repmat((muI.row(0) * invSigmaI).t(), 1, K);
+  arma::mat meanest = (tmp1 / tmp2 + tmp3).t();
+  
+  tmp1 = arma::repmat(meanest, 1, K);
+  tmp2 = kron(diagones, arma::rowvec(2, arma::fill::ones));
+  arma::rowvec meanest0 = sum((tmp1 * varest) % tmp2);
+
+  tmp1 = arma::randn(1, 2 * K);
+  arma::rowvec lambdaphi = arma::repmat(meanest0, 1, 1) + tmp1 * arma::chol(varest);
+  arma::vec phi(K);
+  arma::vec lambda(K);
+  
+  for (int i = 0; i <= (2 * K - 2); i = i + 2) {
+    phi(i / 2) = lambdaphi(i);
+    lambda(i / 2) = lambdaphi(i + 1);
+    if (phi(i / 2) < 0.3)
+      phi(i / 2) = 0.3;
+  }
+  
+  List ret; ret["phi"] = phi; ret["lambda"] = lambda; 
+  return(ret);
+}
+
+
+
+//'@export
 // [[Rcpp::export]]
 arma::vec Rcpp_SampleS_LNRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &lambda, 
                             const arma::vec &phi, const arma::vec &ingroup) {
@@ -155,6 +201,7 @@ arma::vec Rcpp_DrawLambda_LNRT(const arma::mat &RT, const arma::vec &zeta, const
   
   return (beta);
 }
+
 
 
 

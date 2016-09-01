@@ -17,6 +17,11 @@ Rcpp_rwishart <- function(nu, V) {
 }
 
 #'@export
+Rcpp_DrawLambdaPhi_LNRT <- function(RT, theta, sigma2, muI, sigmaI, ingroup) {
+    .Call('LNIRT_Rcpp_DrawLambdaPhi_LNRT', PACKAGE = 'LNIRT', RT, theta, sigma2, muI, sigmaI, ingroup)
+}
+
+#'@export
 Rcpp_SampleS_LNRT <- function(RT, zeta, lambda, phi, ingroup) {
     .Call('LNIRT_Rcpp_SampleS_LNRT', PACKAGE = 'LNIRT', RT, zeta, lambda, phi, ingroup)
 }

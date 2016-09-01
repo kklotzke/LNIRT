@@ -49,6 +49,22 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// Rcpp_DrawLambdaPhi_LNRT
+Rcpp::List Rcpp_DrawLambdaPhi_LNRT(const arma::mat& RT, const arma::vec& theta, const arma::vec& sigma2, const arma::mat muI, const arma::mat sigmaI, const arma::vec ingroup);
+RcppExport SEXP LNIRT_Rcpp_DrawLambdaPhi_LNRT(SEXP RTSEXP, SEXP thetaSEXP, SEXP sigma2SEXP, SEXP muISEXP, SEXP sigmaISEXP, SEXP ingroupSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::mat& >::type RT(RTSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type sigma2(sigma2SEXP);
+    Rcpp::traits::input_parameter< const arma::mat >::type muI(muISEXP);
+    Rcpp::traits::input_parameter< const arma::mat >::type sigmaI(sigmaISEXP);
+    Rcpp::traits::input_parameter< const arma::vec >::type ingroup(ingroupSEXP);
+    __result = Rcpp::wrap(Rcpp_DrawLambdaPhi_LNRT(RT, theta, sigma2, muI, sigmaI, ingroup));
+    return __result;
+END_RCPP
+}
 // Rcpp_SampleS_LNRT
 arma::vec Rcpp_SampleS_LNRT(const arma::mat& RT, const arma::vec& zeta, const arma::vec& lambda, const arma::vec& phi, const arma::vec& ingroup);
 RcppExport SEXP LNIRT_Rcpp_SampleS_LNRT(SEXP RTSEXP, SEXP zetaSEXP, SEXP lambdaSEXP, SEXP phiSEXP, SEXP ingroupSEXP) {

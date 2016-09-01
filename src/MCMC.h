@@ -14,6 +14,10 @@ arma::mat Rcpp_rwishart(const int nu, const arma::mat V);
 
 // MCMC functions used in LNRT
 
+Rcpp::List Rcpp_DrawLambdaPhi_LNRT(const arma::mat &RT, const arma::vec &theta, const arma::vec &sigma2, 
+                             const arma::mat muI, const arma::mat sigmaI, const arma::vec ingroup);
+
+
 arma::vec Rcpp_SampleS_LNRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &lambda, const arma::vec &phi, 
                             const arma::vec &ingroup);
 
