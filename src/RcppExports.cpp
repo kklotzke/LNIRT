@@ -6,6 +6,22 @@
 
 using namespace Rcpp;
 
+// Rcpp_SimulateY
+arma::mat Rcpp_SimulateY(const arma::mat& Y, const arma::vec& theta, const arma::vec& alpha0, const arma::vec& beta0, const arma::vec& guess0, const arma::mat& D);
+RcppExport SEXP LNIRT_Rcpp_SimulateY(SEXP YSEXP, SEXP thetaSEXP, SEXP alpha0SEXP, SEXP beta0SEXP, SEXP guess0SEXP, SEXP DSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type alpha0(alpha0SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type beta0(beta0SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type guess0(guess0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type D(DSEXP);
+    __result = Rcpp::wrap(Rcpp_SimulateY(Y, theta, alpha0, beta0, guess0, D));
+    return __result;
+END_RCPP
+}
 // Rcpp_DrawZeta
 arma::vec Rcpp_DrawZeta(const arma::mat& RT, const arma::vec& phi, const arma::vec& lambda, const arma::vec& sigma2, const arma::vec& mu, const double sigmaz);
 RcppExport SEXP LNIRT_Rcpp_DrawZeta(SEXP RTSEXP, SEXP phiSEXP, SEXP lambdaSEXP, SEXP sigma2SEXP, SEXP muSEXP, SEXP sigmazSEXP) {

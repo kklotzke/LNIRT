@@ -7,8 +7,48 @@ using namespace Rcpp;
 
 // Common functions used in MCMC
 
+//'@export
+// [[Rcpp::export]]
+arma::mat Rcpp_SimulateY(const arma::mat &Y, const arma::vec &theta, const arma::vec &alpha0, 
+                         const arma::vec &beta0, const arma::vec &guess0, const arma::mat &D) {
+  const int N = Y.n_rows;
+  const int K = Y.n_cols;
+  arma::mat Y0 = Y;
+  
+  arma::mat G(N, K);
+  G.fill(0);
+  for (int kk = 0; kk < K; kk++) {
+    G.col(kk) = arma::vec(rbinom(N, 1, guess0(kk)));
+  }
 
+  arma::mat rand(runif(N * K));
+  rand.reshape(N, K);  
+  arma::mat par = theta * alpha0.t() - arma::repmat(beta0.t(), N, 1);
+  for (int i = 0; i < N; i++) {
+    for (int kk = 0; kk < K; kk++) {
+      double prob = R::pnorm(par(i, kk), 0.0, 1.0, 1, 0); // eta, mu, sd, lower.tail, log.p
+      double tmp = 0;
+      if (rand(i, kk) < prob) {
+        tmp = 1;
+      }
+      
+      if (D(i, kk) == 0) {
+        if (G(i, kk) == 1) { 
+          Y0(i, kk) = 1; // missing: guessed correctly
+        }
+        else {
+          Y0(i, kk) = tmp; // missing: response generated
+        }
+      }
+      
+    }
+  }
+  
+  return(Y0);
+}
 
+  
+  
 //'@export
 // [[Rcpp::export]]
 arma::vec Rcpp_DrawZeta(const arma::mat &RT, const arma::vec &phi, const arma::vec &lambda,

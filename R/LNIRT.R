@@ -174,9 +174,9 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         # Draw speed parameter 
         dum <- Conditional(2, muP, SigmaP, theta)
         if (par1) {
-            theta[, 2] <- Draw_Zeta(RT = RT, phi = ab[, 3], lambda = ab[, 3] * ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
+            theta[, 2] <- DrawZeta(RT = RT, phi = ab[, 3], lambda = ab[, 3] * ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
         } else {
-            theta[, 2] <- Draw_Zeta(RT = RT, phi = ab[, 3], lambda = ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
+            theta[, 2] <- DrawZeta(RT = RT, phi = ab[, 3], lambda = ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
         }
         
         # Rescale for identification
