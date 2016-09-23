@@ -2,6 +2,9 @@
 
 // Common functions used in MCMC
 
+arma::mat Rcpp_SimulateRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &lambda, 
+                         const arma::vec &phi, const arma::vec &sigma2, const arma::mat DT);
+
 arma::mat Rcpp_SimulateY(const arma::mat &Y, const arma::vec &theta, const arma::vec &alpha0, 
                          const arma::vec &beta0, const arma::vec &guess0, const arma::mat D);
 

@@ -7,6 +7,34 @@ using namespace Rcpp;
 
 // Common functions used in MCMC
 
+
+//'@export
+// [[Rcpp::export]]
+arma::mat Rcpp_SimulateRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &lambda, 
+                          const arma::vec &phi, const arma::vec &sigma2, const arma::mat DT) {
+  const int N = RT.n_rows;
+  const int K = RT.n_cols;
+  arma::mat RT0 = RT;
+  arma::mat DT0 = DT;
+  
+  arma::mat meanT = arma::repmat(lambda.t(), N, 1) - arma::repmat(phi.t(), N, 1) % arma::repmat(zeta, 1, K);
+  meanT.reshape(N * K, 1);
+  arma::mat sigmaL = arma::repmat(sqrt(sigma2.t()), N, 1);
+  sigmaL.reshape(N * K, 1);
+  RT0.reshape(N * K, 1);
+  DT0.reshape(N * K, 1);
+  
+  for (int i = 0; i < N * K; i ++) {
+   if (DT0(i, 0) == 0) {
+     RT0(i, 0) = R::rnorm(meanT(i, 0), sigmaL(i, 0)); 
+   }
+  }
+  RT0.reshape(N, K);
+  
+  return(RT0);
+}
+
+
 //'@export
 // [[Rcpp::export]]
 arma::mat Rcpp_SimulateY(const arma::mat &Y, const arma::vec &theta, const arma::vec &alpha0, 
