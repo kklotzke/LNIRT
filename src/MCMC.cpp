@@ -20,8 +20,22 @@ Rcpp::List Rcpp_Conditional(const int kk, const arma::mat &Mu, const arma::mat &
     arma::mat C = Z.submat(0, 1, N - 1, K - 1) - Mu.submat(0, 1, N - 1, K - 1);
     CMEAN = Mu.col(0).t() + Sigma.submat(0, 1, 0, K - 1) * inv(Sigma.submat(1, 1, K - 1, K - 1)) * C.t();
     CSD = Sigma(0, 0) - Sigma.submat(0, 1, 0, K - 1) * inv(Sigma.submat(1, 1, K - 1, K - 1)) * Sigma.submat(1, 0, K - 1, 0);
-    Rcout << CSD << std::endl;
-    
+  }
+  if (kk > 1) {
+    if (kk < K) {
+      arma::mat C = Z.submat(0, 0, N - 1, kk - 2) - Mu.submat(0, 0, N - 1, kk - 2);
+      arma::mat CMu1 = Mu.submat(0, kk - 1, N - 1, K - 1) + (Sigma.submat(0, kk - 1, kk - 2, K - 1).t() * inv(Sigma.submat(0, 0, kk - 2, kk - 2)) * C.t()).t();
+      arma::mat CSigma = Sigma.submat(kk - 1, kk - 1, K - 1, K - 1) - Sigma.submat(0, kk - 1, kk - 2, K - 1).t() * inv(Sigma.submat(0, 0, kk - 2, kk - 2)) * Sigma.submat(0, kk - 1, kk - 2, K - 1);
+      const int J = CSigma.n_cols;
+      C = Z.submat(0, kk, N - 1, K - 1) - CMu1.submat(0, 1, N - 1, J - 1);
+      CMEAN = CMu1.col(0).t() + CSigma.submat(0, 1, 0, J - 1) * inv(CSigma.submat(1, 1, J - 1, J - 1)) * C.t();
+      CSD = CSigma(0, 0) - CSigma.submat(0, 1, 0, J - 1) * inv(Sigma.submat(1, 1, J - 1, J - 1)) * CSigma.submat(1, 0, J - 1, 0);
+    }
+    else if (kk == K) {
+      arma::mat C = Z.submat(0, 0, N - 1, K - 2) - Mu.submat(0, 0, N - 1, K - 2);
+      CMEAN = Mu.col(K - 1).t() + Sigma.submat(0, K - 1, K - 2, K - 1).t() * inv(Sigma.submat(0, 0, K - 2, K - 2)) * C.t();
+      CSD = Sigma(K - 1, K - 1) - Sigma.submat(0, K - 1, K - 2, K - 1).t() * inv(Sigma.submat(0, 0, K - 2, K - 2)) * Sigma.submat(0, K - 1, K - 2, K - 1);
+    }
   }
   
   List ret; ret["CMU"] = CMEAN; ret["CVAR"] = CSD; 
