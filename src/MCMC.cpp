@@ -7,6 +7,27 @@ using namespace Rcpp;
 
 // Common functions used in MCMC
 
+//'@export
+// [[Rcpp::export]]
+Rcpp::List Rcpp_Conditional(const int kk, const arma::mat &Mu, const arma::mat &Sigma, const arma::mat &Z) {
+  const int N = Z.n_rows;
+  const int K = Z.n_cols;
+  
+  arma::mat CMEAN;
+  arma::mat CSD;
+  
+  if (kk == 1) {
+    arma::mat C = Z.submat(0, 1, N - 1, K - 1) - Mu.submat(0, 1, N - 1, K - 1);
+    CMEAN = Mu.col(0).t() + Sigma.submat(0, 1, 0, K - 1) * inv(Sigma.submat(1, 1, K - 1, K - 1)) * C.t();
+    CSD = Sigma(0, 0) - Sigma.submat(0, 1, 0, K - 1) * inv(Sigma.submat(1, 1, K - 1, K - 1)) * Sigma.submat(1, 0, K - 1, 0);
+    Rcout << CSD << std::endl;
+    
+  }
+  
+  List ret; ret["CMU"] = CMEAN; ret["CVAR"] = CSD; 
+  return(ret);
+}
+
 
 //'@export
 // [[Rcpp::export]]

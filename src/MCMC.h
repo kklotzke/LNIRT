@@ -2,6 +2,8 @@
 
 // Common functions used in MCMC
 
+Rcpp::List Conditional(const int kk, const arma::mat &Mu, const arma::mat &Sigma, const arma::mat &Z);
+
 arma::mat Rcpp_SimulateRT(const arma::mat &RT, const arma::vec &zeta, const arma::vec &lambda, 
                          const arma::vec &phi, const arma::vec &sigma2, const arma::mat DT);
 

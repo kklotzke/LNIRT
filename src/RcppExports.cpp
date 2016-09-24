@@ -6,6 +6,20 @@
 
 using namespace Rcpp;
 
+// Rcpp_Conditional
+Rcpp::List Rcpp_Conditional(const int kk, const arma::mat& Mu, const arma::mat& Sigma, const arma::mat& Z);
+RcppExport SEXP LNIRT_Rcpp_Conditional(SEXP kkSEXP, SEXP MuSEXP, SEXP SigmaSEXP, SEXP ZSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type kk(kkSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Mu(MuSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Sigma(SigmaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Z(ZSEXP);
+    rcpp_result_gen = Rcpp::wrap(Rcpp_Conditional(kk, Mu, Sigma, Z));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Rcpp_SimulateRT
 arma::mat Rcpp_SimulateRT(const arma::mat& RT, const arma::vec& zeta, const arma::vec& lambda, const arma::vec& phi, const arma::vec& sigma2, const arma::mat DT);
 RcppExport SEXP LNIRT_Rcpp_SimulateRT(SEXP RTSEXP, SEXP zetaSEXP, SEXP lambdaSEXP, SEXP phiSEXP, SEXP sigma2SEXP, SEXP DTSEXP) {

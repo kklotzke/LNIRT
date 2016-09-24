@@ -2,6 +2,11 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #'@export
+Rcpp_Conditional <- function(kk, Mu, Sigma, Z) {
+    .Call('LNIRT_Rcpp_Conditional', PACKAGE = 'LNIRT', kk, Mu, Sigma, Z)
+}
+
+#'@export
 Rcpp_SimulateRT <- function(RT, zeta, lambda, phi, sigma2, DT) {
     .Call('LNIRT_Rcpp_SimulateRT', PACKAGE = 'LNIRT', RT, zeta, lambda, phi, sigma2, DT)
 }
