@@ -172,9 +172,9 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         # Draw speed parameter 
         dum <- Conditional(2, muP, SigmaP, theta)
         if (par1) {
-            theta[, 2] <- DrawZeta_LNIRT(RT = RT, phi = ab[, 3], lambda = ab[, 3] * ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
+            theta[, 2] <- DrawZeta(RT = RT, phi = ab[, 3], lambda = ab[, 3] * ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
         } else {
-            theta[, 2] <- DrawZeta_LNIRT(RT = RT, phi = ab[, 3], lambda = ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
+            theta[, 2] <- DrawZeta(RT = RT, phi = ab[, 3], lambda = ab[, 4], sigma2 = sigma2, mu = as.vector(dum$CMU), sigmaz = as.vector(dum$CVAR))  ## speed 
         }
         
         # Rescale for identification
@@ -275,13 +275,13 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         
         # Population mean estimate for person ability and speed
         X <- matrix(1, N, 1)
-        muP <- SampleB_LNIRT(theta, X, SigmaP, muP0, SigmaP0)
+        muP <- SampleB(theta, X, SigmaP, muP0, SigmaP0)
         MmuP[ii, ] <- muP$B
         muP <- muP$pred
         
         # Covariance matrix person parameters
         SS <- crossprod(theta - muP) + SigmaP0
-        SigmaP <- rwishart_LNIRT(2 + N, chol2inv(chol(SS)))$IW
+        SigmaP <- rwishart(2 + N, chol2inv(chol(SS)))$IW
         MSP[ii, , ] <- SigmaP
         
         X <- matrix(1, K, 1)
@@ -293,7 +293,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         
         # Population mean estimates for item parameters 
         # 1: item discrimination 2: item difficulty 3: time discrimination 4: time intensity
-        muI2 <- SampleB_LNIRT(Y = ab1, X = X, Sigma = SigmaI, B0 = muI0, V0 = SigmaI0)
+        muI2 <- SampleB(Y = ab1, X = X, Sigma = SigmaI, B0 = muI0, V0 = SigmaI0)
         if (ident == 2) {
             MmuI[ii, c(1, 2, 3, 4)] <- muI2$B[c(1, 2, 3, 4)]
             muI[, c(1, 2, 3, 4)] <- muI2$pred[, c(1, 2, 3, 4)]
@@ -305,7 +305,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         # Covariance matrix item parameters
         muI1 <- matrix(muI, ncol = 4, nrow = K, byrow = FALSE)
         SS <- crossprod(ab1 - muI1) + SigmaI0
-        SigmaI <- rwishart_LNIRT(4 + K, chol2inv(chol(SS)))$IW
+        SigmaI <- rwishart(4 + K, chol2inv(chol(SS)))$IW
         MSI[ii, , ] <- SigmaI
         
         if (ii > 1000) {

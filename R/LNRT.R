@@ -76,7 +76,7 @@ LNRT <- function(RT, data, XG = 1000, Discrimination = TRUE, WL = FALSE) {
           }
       }
       
-      theta <- DrawZeta_LNRT(RT, ab[, 1], ab[, 2], sigma2, muP, SigmaP[1, 1])
+      theta <- DrawZeta(RT, ab[, 1], ab[, 2], sigma2, muP, SigmaP[1, 1])
       theta[1:N] <- theta[1:N] - mean(theta)
       MT[1:N] <- MT[1:N] + theta[1:N]
       MT2[1:N] <- MT2[1:N] + theta[1:N]^2
@@ -107,12 +107,12 @@ LNRT <- function(RT, data, XG = 1000, Discrimination = TRUE, WL = FALSE) {
       }
       
       X <- matrix(1, N, 1)
-      muP <- SampleB_LNRT(theta, X, SigmaP, muP0, SigmaP0)
+      muP <- SampleB(theta, X, SigmaP, muP0, SigmaP0)
       MmuP[ii, ] <- muP$B
       muP <- muP$pred
       
       SS <- crossprod(theta - muP) + SigmaP0
-      SigmaP <- rwishart_LNRT(1 + N, chol2inv(chol(SS)))$IW
+      SigmaP <- rwishart(1 + N, chol2inv(chol(SS)))$IW
       MSP[ii, , ] <- SigmaP
       
       X <- matrix(1, K, 1)
@@ -121,14 +121,14 @@ LNRT <- function(RT, data, XG = 1000, Discrimination = TRUE, WL = FALSE) {
       } else {
           ab1 <- ab
       }
-      muI2 <- SampleB_LNRT(ab1, X, SigmaI, muI0, SigmaI0)
+      muI2 <- SampleB(ab1, X, SigmaI, muI0, SigmaI0)
       MmuI[ii, 1] <- muI2$B[1]
       MmuI[ii, 2] <- muI2$B[2]
       muI[, 1] <- muI2$pred[, 1]
       muI[, 2] <- muI2$pred[, 2]
       
       SS <- crossprod(ab1 - muI) + SigmaI0
-      SigmaI <- rwishart_LNRT(2 + K, chol2inv(chol(SS)))$IW
+      SigmaI <- rwishart(2 + K, chol2inv(chol(SS)))$IW
       MSI[ii, , ] <- SigmaI
       
       if (ii > 1000) {

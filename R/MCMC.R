@@ -1,7 +1,7 @@
 ### Common functions used in MCMC ###
 
 Conditional <- function(kk, Mu, Sigma, Z) {
-    
+
     K <- ncol(Z)
     N <- nrow(Z)
     
@@ -65,20 +65,58 @@ SimulateY <- function(Y, theta, alpha0, beta0, guess0, D) {
     return(Y)
 }
 
+DrawZeta <- function(RT, phi, lambda, sigma2, mu, sigmaz) {
+  K <- ncol(RT)
+  N <- nrow(RT)
+  Z <- matrix(lambda, nrow = K, ncol = N) - t(RT)
+  X <- matrix(phi, K, 1)
+  sigma2inv <- diag(1/sigma2[1:K])
+  vartheta <- (1/((t(phi) %*% sigma2inv) %*% phi + 1/sigmaz))[1, 1]
+  meantheta <- matrix(((t(phi) %*% sigma2inv) %*% Z + t(mu/sigmaz)) * vartheta, ncol = 1, nrow = N)
+  zeta <- matrix(rnorm(N, mean = meantheta, sd = sqrt(vartheta)), ncol = 1, nrow = N)
+  
+  return(zeta)
+}
+
+SampleB <- function(Y, X, Sigma, B0, V0) {
+  m <- ncol(X)
+  k <- ncol(Y)
+  Bvar <- solve(solve(Sigma %x% solve(crossprod(X))) + solve(V0))
+  Btilde <- Bvar %*% (solve(Sigma %x% diag(m)) %*% matrix(crossprod(X, Y), ncol = 1) + solve(V0) %*% matrix(B0, ncol = 1))
+  B <- Btilde + chol(Bvar) %*% matrix(rnorm(length(Btilde)), ncol = 1)
+  pred <- X %*% matrix(B, ncol = k)
+  return(list(B = B, pred = pred))
+}
+
+rwishart <- function(nu, V) {
+  m = nrow(V)
+  df = (nu + nu - m + 1) - (nu - m + 1):nu
+  if (m > 1) {
+    RT = diag(sqrt(rchisq(c(rep(1, m)), df)))
+    RT[lower.tri(RT)] = rnorm((m * (m + 1)/2 - m))
+  } else {
+    RT = sqrt(rchisq(1, df))
+  }
+  U = chol(V)
+  C = t(RT) %*% U
+  CI = backsolve(C, diag(m))
+  return(list(IW = crossprod(t(CI))))
+}
 
 
 ### MCMC functions used in LNRT ###
 
-DrawLambdaPhi_LNRT <- function(RT, theta, sigma2, muI, SigmaI, ingroup) {
-    
+DrawLambdaPhi_LNRT <- function(RT, theta, sigma2, muI, sigmaI, ingroup) {
     # library(MASS)
     K <- ncol(RT)
     N <- nrow(RT)
-    invSigmaI <- solve(SigmaI)
+    invSigmaI <- solve(sigmaI)
     H <- matrix(c(-theta, rep(1, N)), ncol = 2, nrow = N) * ingroup
     varest <- solve(kronecker(diag(1/sigma2[1:K]), (t(H) %*% H)) + kronecker(diag(1, K), invSigmaI))
+    
     meanest <- t((t(H) %*% RT)/(t(matrix(sigma2, nrow = K, ncol = 2))) + matrix(t(muI[1, ] %*% invSigmaI), ncol = K, nrow = 2))
     meanest <- apply((matrix(rep(meanest, K), ncol = 2 * K) %*% varest) * t(kronecker(diag(K), c(1, 1))), 2, sum)
+
     lambdaphi <- MASS::mvrnorm(1, mu = meanest, Sigma = varest)
     lambdaphi <- matrix(lambdaphi, ncol = 2, nrow = K, byrow = RT)
     
@@ -101,44 +139,6 @@ SampleS_LNRT <- function(RT, zeta, lambda, phi, ingroup) {
     return(sigma2)
 }
 
-DrawZeta_LNRT <- function(RT, phi, lambda, sigma2, mu, sigmaz) {
-    K <- ncol(RT)
-    N <- nrow(RT)
-    Z <- matrix(lambda, nrow = K, ncol = N) - t(RT)
-    X <- matrix(phi, K, 1)
-    sigma2inv <- diag(1/sigma2[1:K])
-    vartheta <- (1/((t(phi) %*% sigma2inv) %*% phi + 1/sigmaz))[1, 1]
-    meantheta <- matrix(((t(phi) %*% sigma2inv) %*% Z + t(mu/sigmaz)) * vartheta, ncol = 1, nrow = N)
-    zeta <- matrix(rnorm(N, mean = meantheta, sd = sqrt(vartheta)), ncol = 1, nrow = N)
-    
-    return(zeta)
-}
-
-SampleB_LNRT <- function(Y, X, Sigma, B0, V0) {
-    m <- ncol(X)
-    k <- ncol(Y)
-    Bvar <- solve(solve(Sigma %x% solve(crossprod(X))) + solve(V0))
-    Btilde <- Bvar %*% (solve(Sigma %x% diag(m)) %*% matrix(crossprod(X, Y), ncol = 1) + solve(V0) %*% matrix(B0, ncol = 1))
-    B <- Btilde + chol(Bvar) %*% matrix(rnorm(length(Btilde)), ncol = 1)
-    pred <- X %*% matrix(B, ncol = k)
-    return(list(B = B, pred = pred))
-}
-
-rwishart_LNRT <- function(nu, V) {
-    m = nrow(V)
-    df = (nu + nu - m + 1) - (nu - m + 1):nu
-    if (m > 1) {
-        RT = diag(sqrt(rchisq(c(rep(1, m)), df)))
-        RT[lower.tri(RT)] = rnorm((m * (m + 1)/2 - m))
-    } else {
-        RT = sqrt(rchisq(1, df))
-    }
-    U = chol(V)
-    C = t(RT) %*% U
-    CI = backsolve(C, diag(m))
-    return(list(IW = crossprod(t(CI))))
-}
-
 DrawLambda_LNRT <- function(RT, zeta, sigma2, mu, sigma) {
     
     # prior mu,sigma
@@ -146,7 +146,6 @@ DrawLambda_LNRT <- function(RT, zeta, sigma2, mu, sigma) {
     K <- ncol(RT)
     zetaT <- matrix(zeta, ncol = K, nrow = N, byrow = F)
     RTs <- matrix(RT + zetaT, ncol = K, nrow = N)
-    
     XX <- matrix(1, ncol = K, nrow = N)
     pvar <- diag(t(XX) %*% XX)/sigma2 + 1/sigma[1, 1]
     betahat <- diag(t(XX) %*% RT)/sigma2
@@ -197,7 +196,7 @@ DrawZ_LNIRT <- function(alpha0, beta0, theta0, S, D) {
 
 
 DrawTheta_LNIRT <- function(alpha0, beta0, Z, mu, sigma) {
-    
+
     N <- nrow(Z)
     K <- ncol(Z)
     pvar <- (sum(alpha0^2) + 1/as.vector(sigma))
@@ -209,19 +208,6 @@ DrawTheta_LNIRT <- function(alpha0, beta0, Z, mu, sigma) {
 }
 
 
-DrawZeta_LNIRT <- function(RT, phi, lambda, sigma2, mu, sigmaz) {
-    K <- ncol(RT)
-    N <- nrow(RT)
-    Z <- matrix(lambda, nrow = K, ncol = N) - t(RT)
-    X <- matrix(phi, K, 1)
-    sigma2inv <- diag(1/sigma2[1:K])
-    vartheta <- (1/((t(phi) %*% sigma2inv) %*% phi + 1/sigmaz))[1, 1]
-    meantheta <- matrix(((t(phi) %*% sigma2inv) %*% Z + t(mu/sigmaz)) * vartheta, ncol = 1, nrow = N)
-    zeta <- matrix(rnorm(N, mean = meantheta, sd = sqrt(vartheta)), ncol = 1, nrow = N)
-    return(zeta)
-}
-
-
 DrawC_LNIRT <- function(S, Y) {
     
     N <- nrow(Y)
@@ -229,11 +215,12 @@ DrawC_LNIRT <- function(S, Y) {
     Q1 <- 20 + apply((S == 0) * (Y == 1), 2, sum)  #answer unknown and guess correctly
     Q2 <- 80 + apply(S == 0, 2, sum)  #answer unknown
     guess <- rbeta(K, Q1, Q2)
+    
     return(guess)
 }
 
 DrawBeta_LNIRT <- function(theta, alpha, Z, mu, sigma) {
-    
+
     # prior mu,sigma
     N <- nrow(Z)
     K <- ncol(Z)
@@ -246,20 +233,20 @@ DrawBeta_LNIRT <- function(theta, alpha, Z, mu, sigma) {
     betahat <- diag(t(XX) %*% Z)
     mu <- (betahat + mu/sigma[1, 1])/pvar
     beta <- rnorm(K, mean = mu, sd = sqrt(1/pvar))
-    
+
     return(beta)
 }
 
 
 DrawLambda_LNIRT <- function(RT, phi, zeta, sigma2, mu, sigmal) {
-    
+  
     K <- ncol(RT)
     N <- nrow(RT)
     Z <- RT + t(matrix(phi, K, N)) * matrix(zeta, N, K)
     X <- matrix(1, N, 1)
     Sigma <- diag(sigma2)
     Sigma0 <- diag(K) * as.vector(sigmal)
-    lambda <- SampleB_LNIRT(Z, X, Sigma, as.vector(mu), Sigma0)$B
+    lambda <- SampleB(Z, X, Sigma, as.vector(mu), Sigma0)$B
     return(list(lambda = lambda))
 }
 
@@ -285,7 +272,7 @@ DrawPhi_LNIRT <- function(RT, lambda, zeta, sigma2, mu, sigmal) {
     X <- matrix(zeta, N, 1)
     Sigma <- diag(sigma2)
     Sigma0 <- diag(K) * as.vector(sigmal)
-    phi <- SampleB_LNIRT(Z, X, Sigma, as.vector(mu), Sigma0)$B
+    phi <- SampleB(Z, X, Sigma, as.vector(mu), Sigma0)$B
     return(phi)
 }
 
@@ -300,30 +287,5 @@ SampleS2_LNIRT <- function(RT, zeta, lambda, phi) {
 }
 
 
-SampleB_LNIRT <- function(Y, X, Sigma, B0, V0) {
-    m <- ncol(X)
-    k <- ncol(Y)
-    Bvar <- solve(solve(Sigma %x% solve(crossprod(X))) + solve(V0))
-    Btilde <- Bvar %*% (solve(Sigma %x% diag(m)) %*% matrix(crossprod(X, Y), ncol = 1) + solve(V0) %*% matrix(B0, ncol = 1))
-    B <- Btilde + chol(Bvar) %*% matrix(rnorm(length(Btilde)), ncol = 1)
-    pred <- X %*% matrix(B, ncol = k)
-    return(list(B = B, pred = pred))
-}
-
-
-rwishart_LNIRT <- function(nu, V) {
-    m = nrow(V)
-    df = (nu + nu - m + 1) - (nu - m + 1):nu
-    if (m > 1) {
-        RT = diag(sqrt(rchisq(c(rep(1, m)), df)))
-        RT[lower.tri(RT)] = rnorm((m * (m + 1)/2 - m))
-    } else {
-        RT = sqrt(rchisq(1, df))
-    }
-    U = chol(V)
-    C = t(RT) %*% U
-    CI = backsolve(C, diag(m))
-    return(list(IW = crossprod(t(CI))))
-}
 
 
