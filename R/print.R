@@ -234,8 +234,8 @@ print.summary.LNIRT <- function(x, ...)
     # Percentage Aberrant lZP (chi-square statstic)
     cat("\n\t", "Percentage Outliers Persons (5% level)", "\n")
     cat("\n\t", "lZ", "\n")
-    cat("\t", round(100 * length(which(x$lZP < 0.05))/N, 2), "%", "\t\n")
-    cat("\t 95% Posterior Probability: ", round(100 * sum(x$EAPCP1 > 0.95)/N, 2), "%", "\t\n")
+    cat("\t", round(100 * length(which(x$lZP < 0.05))/x$N, 2), "%", "\t\n")
+    cat("\t 95% Posterior Probability: ", round(100 * sum(x$EAPCP1 > 0.95)/x$N, 2), "%", "\t\n")
     
     # Percentage Persons (Estimation Group, Aberrant Group)
     
@@ -258,7 +258,7 @@ print.summary.LNIRT <- function(x, ...)
     set <- which(x$EAPresid > 0.95)
     if (length(set >= 1)) {
       cat("\n\t", "Percentage Extreme Residuals (.95 Posterior Probability)", "\n")
-      cat("\t", round(100 * length(set)/N, 4), "%", "\t\n")
+      cat("\t", round(100 * length(set)/x$N, 4), "%", "\t\n")
       
       ## Identify Extremes
       set <- which(x$EAPresid > 0.95)
@@ -315,7 +315,7 @@ print.summary.LNIRT <- function(x, ...)
     # Percentage Aberrant lZP (chi-square statstic) Percentage Aberrant l0 (log-likelihood statstic)
     cat("\n\t", "Percentage Outliers Persons (5% level)", "\n")
     cat("\n\t", "Log-likelihood Statistic", "\n")
-    # cat('\t',round(100*length(which(out$lZPA < .05))/N,2),'%','\t\n')
+    # cat('\t',round(100*length(which(out$lZPA < .05))/x$N,2),'%','\t\n')
     cat("\t", round(100 * length(which(x$PFlp < 0.05))/x$N, 2), "%", "\t\n")
     cat("\t 95% Posterior Probability: ", round(100 * sum(x$EAPCP2 > 0.95)/x$N, 2), "%", "\t\n")
     cat("\t 95% Posterior Probability (Ability and Speed): ", round(100 * sum(x$EAPCP3 > 0.95)/x$N, 2), "%", "\t\n")
@@ -454,9 +454,9 @@ print.summary.LNRT <- function(x, ...)
     
     for (ii in 1:x$K) {
       cat("\n\t", ii, "\t")
-      printF(tintens[ii], w = 6, d = 3)  # estimated bsp  
+      printF(x$tintens[ii], w = 6, d = 3)  # estimated bsp  
       cat("\t")
-      printF(setintens[ii], w = 6, d = 3)
+      printF(x$setintens[ii], w = 6, d = 3)
       if (x$simv) {
         cat("\t")
         printF(x$data$bsp[ii], w = 6, d = 3)  # bsp true value
@@ -600,8 +600,8 @@ print.summary.LNRT <- function(x, ...)
     # Percentage Aberrant lZP3
     cat("\n\t", "Percentage Outliers Persons (5% level)", "\n")
     cat("\n\t", "lZ", "\n")
-    cat("\t", round(100 * sum(x$lZP < 0.05)/N, 2), "%", "\t\n")
-    cat("\t 95% Posterior Probability: ", round(100 * sum(x$EAPCP > 0.95)/N, 2), "%", "\t\n")
+    cat("\t", round(100 * sum(x$lZP < 0.05)/x$N, 2), "%", "\t\n")
+    cat("\t 95% Posterior Probability: ", round(100 * sum(x$EAPCP > 0.95)/x$N, 2), "%", "\t\n")
     
     
     # Percentage Persons (Estimation Group, Aberrant Group)
