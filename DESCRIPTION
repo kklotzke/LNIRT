@@ -8,7 +8,7 @@ Imports:
     MASS,
     stats,
     utils
-Description: Allows the simultaneous analysis of responses and response times in an Item Response Theory (IRT) modelling framework. Parameter estimation is done with a MCMC algorithm. LNIRT replaces the package CIRT, which was written by Rinke Klein Entink. For reference, see the paper by Fox, Klein Entink and Van der Linden (2007), "Modeling of Responses and Response Times with the Package cirt", Journal of Statistical Software, doi:10.18637/jss.v020.i07.
+Description: Allows the simultaneous analysis of responses and response times in an Item Response Theory (IRT) modelling framework. Parameter estimation is done with a MCMC algorithm. LNIRT replaces the package CIRT, which was written by Rinke Klein Entink. For reference, see the paper by Fox, Klein Entink and Van der Linden (2007), "Modeling of Responses and Response Times with the Package cirt", Journal of Statistical Software, <doi:10.18637/jss.v020.i07>.
 License: GPL-2 | GPL-3
 LazyData: TRUE
 RoxygenNote: 5.0.1
