@@ -36,9 +36,8 @@
 #' 
 #' @examples 
 #' # Log-normal response time IRT modelling
-#' \dontrun{
 #' data <- simLNIRT(N = 500, K = 20, rho = 0.8, WL = FALSE)
-#' summary(LNIRT(RT = RT1, Y = Y, data = data, XG = 1500, WL = FALSE, residual = TRUE))}
+#' summary(LNIRT(RT = RT1, Y = Y, data = data, XG = 500, WL = FALSE))
 #'  
 #' @export
 LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, WL = FALSE, td = FALSE, alpha, beta) {

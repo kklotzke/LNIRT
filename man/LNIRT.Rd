@@ -41,9 +41,8 @@ Log-normal response time IRT modelling
 }
 \examples{
 # Log-normal response time IRT modelling
-\dontrun{
 data <- simLNIRT(N = 500, K = 20, rho = 0.8, WL = FALSE)
-summary(LNIRT(RT = RT1, Y = Y, data = data, XG = 1500, WL = FALSE, residual = TRUE))}
+summary(LNIRT(RT = RT1, Y = Y, data = data, XG = 500, WL = FALSE))
  
 }
 

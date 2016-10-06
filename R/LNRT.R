@@ -19,9 +19,8 @@
 #' 
 #' @examples 
 #' # Log-normal response time modelling
-#' \dontrun{
 #' data <- simLNIRT(N = 500, K = 20, rho = 0.8, WL = FALSE)
-#' summary(LNRT(RT = RT, data = data, XG = 1000, Discrimination = TRUE, WL = FALSE))}
+#' summary(LNRT(RT = RT, data = data, XG = 500, Discrimination = TRUE, WL = FALSE))
 #'  
 #' @export
 LNRT <- function(RT, data, XG = 1000, Discrimination = TRUE, WL = FALSE) {
