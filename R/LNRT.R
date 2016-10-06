@@ -1,3 +1,28 @@
+#' Log-normal response time modelling
+#' 
+#' @param RT
+#' a Person-x-Item matrix of log-response times (time spent on solving an item).
+#' @param data
+#' either a list or a simLNIRT object containing the response time matrix. 
+#' If a simLNIRT object is provided, in the summary the simulated time parameters are shown alongside of the estimates.
+#' If the RT variable cannot be found in the list, or if no data object is given, then the RT variable is taken
+#' from the environment from which LNRT is called.
+#' @param XG
+#' the number of MCMC iterations to perform (default: 1000).
+#' @param Discrimination
+#' estimate the time-discrimination parameter (default: true).
+#' @param WL
+#' define the time-discrimination parameter as measurement error variance parameter (default: false).
+#' 
+#' @return 
+#' an object of class LNRT.
+#' 
+#' @examples 
+#' # Log-normal response time modelling
+#' \dontrun{
+#' data <- simLNIRT(N = 500, K = 20, rho = 0.8, WL = FALSE)
+#' summary(LNRT(RT = RT, data = data, XG = 1000, Discrimination = TRUE, WL = FALSE))}
+#'  
 #' @export
 LNRT <- function(RT, data, XG = 1000, Discrimination = TRUE, WL = FALSE) {
     

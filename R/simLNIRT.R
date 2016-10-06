@@ -1,7 +1,21 @@
+#' Simulate data for log-normal response time IRT modelling
+#' 
+#' @param N
+#' the number of persons.
+#' @param K
+#' the number of items.
+#' @param rho
+#' the correlation between the person ability and person speed parameter.
+#' @param td
+#' set time-discrimination to one (default: false).
+#' @param WL
+#' define the time-discrimination parameter as measurement error variance parameter (default: false).
+#' 
+#' @return 
+#' an object of class simLNIRT.
+#' 
 #' @export
 simLNIRT <- function(N, K, rho, td, WL) {
-    # N respondents, K items rho : covariance theta td : optional if set time discrinination is equal to one library(MASS)
-    
     if (missing(td)) {
         td <- 0
     } else {

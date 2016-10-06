@@ -1,15 +1,48 @@
+#' Log-normal response time IRT modelling
+#' 
 #' @importFrom MASS mvrnorm
 #' @importFrom stats ks.test pchisq pgamma pnorm qnorm rbeta
 #' rbinom rchisq rgamma rlnorm rnorm runif var
 #' @importFrom utils flush.console
-
+#' 
+#' @param RT
+#' a Person-x-Item matrix of log-response times (time spent on solving an item).
+#' @param Y
+#' a Person-x-Item matrix of responses.
+#' @param data
+#' either a list or a simLNIRT object containing the response time and response matrices. 
+#' If a simLNIRT object is provided, in the summary the simulated item and time parameters are shown alongside of the estimates.
+#' If the required variables cannot be found in the list, or if no data object is given, then the variables are taken
+#' from the environment from which LNIRT is called.
+#' @param XG
+#' the number of MCMC iterations to perform (default: 1000).
+#' @param guess 
+#' include guessing parameters in the IRT model (default: false).
+#' @param par1
+#' use alternative parameterization (default: false).
+#' @param residual
+#' compute residuals (default: false).
+#' @param WL
+#' define the time-discrimination parameter as measurement error variance parameter (default: false).
+#' @param td
+#' set time-discrimination to one (default: false).
+#' @param alpha
+#' an optional vector of pre-defined item-discrimination parameters.
+#' @param beta
+#' an optional vector of pre-defined item-difficulty parameters.
+#' 
+#' @return 
+#' an object of class LNIRT.
+#' 
+#' @examples 
+#' # Log-normal response time IRT modelling
+#' \dontrun{
+#' data <- simLNIRT(N = 500, K = 20, rho = 0.8, WL = FALSE)
+#' summary(LNIRT(RT = RT1, Y = Y, data = data, XG = 1500, WL = FALSE, residual = TRUE))}
+#'  
 #' @export
 LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, WL = FALSE, td = FALSE, alpha, beta) {
-    ## Main Programm function to call, uses other functions below Inputs: Y = response matrix of dim(N=persons,K=items) RT = log-response time
-    ## matrix (time spent on solving an item) of dim(N=persons,K=items) XG = number of XG iterations for the MCMC algorithm guess: optional
-    ## variable to indicate if guessing parameters should be included in the IRT model td: optional variable to indicate if time-discrimination
-    ## should be set to one, if missing td is included alpha :: pre-defined discrimination parameters beta :: pre-defined difficulty parameters
-    
+
     ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times ident =
     ## 2: Identification : fix mean ability and speed and product item discrimination responses and response times ident <- 1 (default)
     ident <- 2  #(to investigate person fit using latent scores)
