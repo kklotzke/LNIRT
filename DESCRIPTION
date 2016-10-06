@@ -2,13 +2,13 @@ Package: LNIRT
 Type: Package
 Title: LogNormal Response Time Item Response Theory Models
 Version: 0.1.0
-Author: Who wrote it
+Author: Jean-Paul Fox, Rinke Klein Entink, Konrad Klotzke
 Maintainer: Konrad Klotzke <omd.bms.utwente.stats@gmail.com>
 Imports:
     MASS,
     stats,
     utils
-Description: LogNormal Response Time Item Response Theory Models
+Description: The LNIRT package allows the simultaneous analysis of responses and response times in an Item Response Theory (IRT) modelling framework. Parameter estimation is done with a MCMC algorithm. LNIRT replaces the package CIRT, which was written by Rinke Klein Entink. For reference, see the paper by Fox, Klein Entink and Van der Linden, "Modeling of response times and patterns With a Package CIRT", Journal of Statistical Software.
 License: GPL-2 | GPL-3
 LazyData: TRUE
 RoxygenNote: 5.0.1
