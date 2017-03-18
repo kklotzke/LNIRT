@@ -6,8 +6,8 @@ library("rbenchmark")
 
 find_rtools()
 
-n1 <- 10
-k1 <- 4
+n1 <- 10000
+k1 <- 400
 
 a1 <- runif(k1)
 b1 <- runif(k1)
@@ -36,7 +36,9 @@ ingroup2 <- sample(0:1, n1, replace = T)
 theta1 <- matrix(rnorm(n1 * 2), ncol = 2) # 1: ability, 2: speed
 muP1 <- matrix(rnorm(n1 * 2), ncol = 2) # Mean estimates for person parameters 
 SigmaP1 <- diag(rnorm(2,1,1)) # Person covariance matrix
-
+muI1 <- t(matrix(rnorm(4 * k1,1,1), ncol = k1)) # Mean estimates for item parameters 
+SigmaI1 <- diag(rnorm(4,1,1)) # Item covariance matrix
+ab11 <- matrix(rnorm(k1 * 4), ncol = 4)
 
 ### Common functions ###
 
@@ -48,13 +50,22 @@ outSimC12 <- LNIRT:::Conditional(kk = 1, Mu = muP1, Sigma = SigmaP1, Z = theta1)
 print(outSimC11)
 print(outSimC12)
 
-# kk == k
+# kk == K
 outSimC21 <- Rcpp_Conditional(kk = 2, Mu = muP1, Sigma = SigmaP1, Z = theta1)
 outSimC22 <- LNIRT:::Conditional(kk = 2, Mu = muP1, Sigma = SigmaP1, Z = theta1)
 print(outSimC21)
 print(outSimC22)
 
-# kk < k
+# kk < K
+outSimC31 <- Rcpp_Conditional(kk = 2, Mu = muI1, Sigma = SigmaI1, Z = ab11)
+outSimC32 <- LNIRT:::Conditional(kk = 2, Mu = muI1, Sigma = SigmaI1, Z = ab11)
+print(outSimC31)
+print(outSimC32)
+all.equal(outSimC31$CMU, outSimC32$CMU)
+all.equal(outSimC31$CVAR, outSimC32$CVAR)
+benchmark(Rcpp_Conditional(kk = 2, Mu = muI1, Sigma = SigmaI1, Z = ab11))
+benchmark(LNIRT:::Conditional(kk = 2, Mu = muI1, Sigma = SigmaI1, Z = ab11))
+
 
 ## SimulateRT
 set.seed(1)
