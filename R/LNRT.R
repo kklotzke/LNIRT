@@ -35,7 +35,9 @@ LNRT <- function(RT, data, XG = 1000, Discrimination = TRUE, WL = FALSE) {
   N <- nrow(RT)
   K <- ncol(RT)
   
-  #WL <- 1  #time discrimination = 1/sqrt(error variance)
+  if(WL) { 
+    Discrimination <- TRUE   #WL <- 1  #time discrimination = 1/sqrt(error variance)
+  }
   
   ## population theta (ability - speed)
   theta <- matrix(rnorm(N))

@@ -162,7 +162,7 @@ print.summary.LNIRT <- function(x, ...)
     }else{
       cat("\n\n\t", "Mean and Covariance matrix Items (mu_a,mu_b,mu_phi,mu_lambda)", "\n")
       cat("\n\t", "--- Population Mean Item ---","\n")
-      cat("\t","mu_a","\t", "SD","\t","mu_b","\t","SD","\t","mu_phi","\t", "SD","\t","mu_lambda","\t","SD","\n\t")
+      cat("\t","mu_a","\t", "SD","\t","mu_b","\t","SD","\t","mu_phi","", "SD","\t","mu_lam","","SD","\n\t")
       for(jj in c(1,2,3,4)){
         printF(x$pdiscr2[jj], w=6,d=3)
         cat("\t")
@@ -393,10 +393,10 @@ print.summary.LNIRT <- function(x, ...)
     }
     if(x$WL){
       cat("\n\n\t", "--- Covariance matrix Items (a,b,error variance,lambda)---", "\n")
-      cat("\t\t","SigmaI","\t\t", "SD SigmaI","\t\t\t","SigmaI (Correlation)","\n")
+      cat("\t","SigmaI","\t\t\t", "SD SigmaI","\t\t\t","SigmaI (Correlation)","\n")
     }else{
       cat("\n\n\t", "--- Covariance matrix Items (a,b,phi,lambda)---", "\n")
-      cat("\t\t","SigmaI","\t\t", "SD SigmaI","\t\t\t","SigmaI (Correlation)","\n")
+      cat("\t","SigmaI","\t\t\t", "SD SigmaI","\t\t\t","SigmaI (Correlation)","\n")
     }
     for(ii in 1:4){
       cat("\t") 
@@ -417,12 +417,12 @@ print.summary.LNIRT <- function(x, ...)
   if(x$nopredictorp){
     cat("\n\n\t", "Mean and Covariance matrix Persons (ability,speed)", "\n")
     cat("\n\t", "--- Population Mean Person (Ability - Speed)---", "\n")
-    cat("\t\t","muP", "\t", "SD","\n")
+    cat("\t\t\t","muP", "\t", "SD","\n")
     for(ii in 1:2){
       if(ii == 1) {
-        cat("\t Ability ") 
+        cat("\t Ability \t") 
       }else{	
-        cat("\t Speed \t") 
+        cat("\t Speed \t\t") 
       }
       printF(x$ppers2[ii], w=6,d=3)
       cat("\t") 
@@ -859,10 +859,10 @@ print.summary.LNRT <- function(x, ...)
   
   cat("\n\n\t", "Mean and Covariance matrix Items (phi,lambda)", "\n")
   cat("\n\t", "--- Population Mean Item ---", "\n")
-  cat("\t", "mu_phi", " ", "SD", "\t", "mu_lambda", " ", "SD", "\n\t")
+  cat("\t", "mu_phi", " ", "SD", "\t", "mu_lam", " ", "SD", "\n\t")
   for (jj in c(1, 2)) {
     printF(x$pdiscr[jj], w = 6, d = 3)
-    cat("\t")
+    cat("\t ")
     printF(x$sepdiscr[jj], w = 6, d = 3)
     cat("\t")
   }
@@ -878,7 +878,7 @@ print.summary.LNRT <- function(x, ...)
   
   cat("\n\n\t", "Mean and Covariance matrix Persons", "\n")
   cat("\n\t", "--- Population Mean Person ---", "\n")
-  cat("\t", "mu_P", "\t", "SD", "\n\t")
+  cat("\t", "mu_P", "\t ", "SD", "\n\t")
   for (jj in c(1)) {
     printF(x$ppers[jj], w = 6, d = 2)
     cat("\t")
@@ -886,7 +886,7 @@ print.summary.LNRT <- function(x, ...)
     cat("\t")
   }
   cat("\n\n\t", "--- Covariance matrix Person ---", "\n")
-  cat("\t", "Sigma_P", "", "SD", "\n\t")
+  cat("\t", "Sigma_P", "SD", "\n\t")
   for (jj in c(1)) {
     printF(x$pSpers[jj], w = 6, d = 3)
     cat("\t")
