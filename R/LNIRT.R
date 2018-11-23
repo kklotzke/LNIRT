@@ -65,9 +65,7 @@
 #' plot(mcmc.object)
 #' }  
 #' @export
-LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT) {
-
-  
+LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT){
   
     ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times ident =
     ## 2: Identification : fix mean ability and speed and product item discrimination responses and response times ident <- 1 (default)
@@ -171,7 +169,6 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
   		MmuI <- matrix(0,nrow=XG,ncol=2 + c(ncol(XIA)+ncol(XIT)))
     }
 
-    
     ## population theta (ability - speed)
     theta <- matrix(rnorm(N * 2), ncol = 2) # 1: ability, 2: speed
     muP <- matrix(0, nrow=N, ncol=2) # Mean estimates for person parameters 
@@ -247,12 +244,14 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
 		MBDYI <- TRUE #no design missing Y
 	}else{
 		MBDYI <- FALSE #design missings Y
+		Y[MBDY==0] <- 0 #recode design missings to 0 
 	}
 	if(missing(MBDT)){
 		MBDT <- matrix(1,ncol=K,nrow=N) ## RT: no missing by design, 0=missing by design,1=not missing by design
 		MBDTI <- TRUE #no design missing RT
 	}else{
 		MBDTI <- FALSE #design missings RT
+		RT[MBDT==0] <- 0 #recode design missings to 0 
 	}	
 
     # Indicate which responses are missing
@@ -334,7 +333,8 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             }
         }
 	}
-        
+
+       
         # Draw ability parameter 
         dum <- Conditional(1, muP, SigmaP, theta)
 	if(MBDYI){	
@@ -376,7 +376,6 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         if (ident == 2) {
             theta[, 2] <- theta[, 2] - mean(theta[, 2])
         }
-        
         
         MCMC.Samples$Person.Ability[ii, ] <- theta[, 1]
         MCMC.Samples$Person.Speed[ii, ] <- theta[, 2]
@@ -601,7 +600,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             ############################## 
             
             if (residual) {
-			if((MBDTI) & (MBDYI)){	
+			if(MBDYI){	
                 
                 ## IRT Fit Evaluation
                 if (par1) {
@@ -631,9 +630,39 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
                 IFl <- ((iis - 1) * IFl + dum$IFl)/iis
                 PFlp <- ((iis - 1) * PFlp + dum$PFlp)/iis
                 IFlp <- ((iis - 1) * IFlp + dum$IFlp)/iis
+             }else{
+                ## IRT Fit Evaluation
+                if (par1) {
+                  beta1 <- ab[, 1] * ab[, 2]
+                } else {
+                  beta1 <- ab[, 2]
+                }
+                if (PNO) {
+                  dum <- residualAMBD(Z = ZR, Y = SR, theta = theta[, 1], alpha = ab[, 1], beta = beta1, EAPtheta = EAPtheta[, 1], EAPalpha = EAPalpha, 
+                    EAPbeta = EAPbeta,MBDY=MBDY)
+                } else {
+                  dum <- residualAMBD(Z = ZR, Y = Y, theta = theta[, 1], alpha = ab[, 1], beta = beta1, EAPtheta = EAPtheta[, 1], EAPalpha = EAPalpha, 
+                    EAPbeta = EAPbeta,MBDY=MBDY)
+                }
+                EAPKSA <- (dum$KS[1:K, 1] + (iis - 1) * EAPKSA)/iis
+                EAPresidA <- (dum$presidA + (iis - 1) * EAPresidA)/iis
                 
+                # lZPAT <- lZPAT + dum$lZPAT
+                lZPA <- lZPA + dum$lZPA
+                # lZIA <- lZIA + dum$lZIA
+                CF2 <- ifelse(dum$PFlp < 0.05, 1, 0)  #significance level = .05
+                EAPCP2 <- (CF2 + (iis - 1) * EAPCP2)/iis
+                
+                
+                EAPl0 <- ((iis - 1) * EAPl0 + dum$l0)/iis
+                PFl <- ((iis - 1) * PFl + dum$PFl)/iis
+                IFl <- ((iis - 1) * IFl + dum$IFl)/iis
+                PFlp <- ((iis - 1) * PFlp + dum$PFlp)/iis
+                IFlp <- ((iis - 1) * IFlp + dum$IFlp)/iis
+			}   
                 ############################## 
-                
+
+			if(MBDTI){	
                 ## Log-Normal Fit Evaluation
                 if (par1) {
                   lambda1 <- ab[, 3] * ab[, 4]
@@ -654,20 +683,35 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
                   EAPphi = EAPphi, EAPsigma2 = EAPsigma2)
                 EAPresid <- EAPresid + dum$presid
                 EAPKS <- (dum$KS[1:K, 1] + (iis - 1) * EAPKS)/iis
+			}else{
+                ## Log-Normal Fit Evaluation
+                if (par1) {
+                  lambda1 <- ab[, 3] * ab[, 4]
+                } else {
+                  lambda1 <- ab[, 4]
+                }
+                dum <- personfitLNMBD(RT = RT, theta = theta[, 2], phi = ab[, 3], lambda = lambda1, sigma2 = sigma2, MBDT=MBDT)  # lZ statistic
+                lZP <- lZP + dum$lZP
+                lZPT <- lZPT + dum$lZPT
+                CF1 <- ifelse(dum$lZP < 0.05, 1, 0)  #significance level = .05
+                EAPCP1 <- (CF1 + (iis - 1) * EAPCP1)/iis  #speed
+                EAPCP3 <- (CF1 * CF2 + (iis - 1) * EAPCP3)/iis
                 
-                iis <- iis + 1
-            }
-		  }else{
-			if (ii == XG){ 
-				cat("Residual Analysis Not Implemented for Incomplete Designs","\n")	
+                dum <- itemfitLNMBD(RT = RT, theta = theta[, 2], phi = ab[, 3], lambda = lambda1, sigma2 = sigma2, MBDT=MBDT)
+                lZI <- lZI + dum$lZI
+                
+                dum <- residualLNMBD(RT = RT, theta = theta[, 2], phi = ab[, 3], lambda = lambda1, sigma2 = sigma2, EAPtheta = EAPtheta[, 2], EAPlambda = EAPlambda, 
+                  EAPphi = EAPphi, EAPsigma2 = EAPsigma2,MBDT=MBDT)
+                EAPresid <- EAPresid + dum$presid ##for missing values set to zero 
+                EAPKS <- (dum$KS[1:K, 1] + (iis - 1) * EAPKS)/iis
 			}
- 		  }	           
-        }
+                iis <- iis + 1
+		}
+	   }
         
         if (ii%%100 == 0) 
             cat("Iteration ", ii, " ", "\n")
         flush.console()
-        
     }
     
     

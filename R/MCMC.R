@@ -272,8 +272,9 @@ DrawZ_LNIRT <- function(alpha0, beta0, theta0, S, D) {
     return(Z)
 }
 
-
 DrawZMBD_LNIRT   <- function(alpha0,beta0,theta0,S,D,MBDY){
+
+  ##Y[MBDY==0] <- 0 #avoid problems with NAs
   N 		<- nrow(S)
   K 		<- ncol(S) 
   eta	<- t(matrix(alpha0, ncol = N, nrow= K)) * matrix(theta0,ncol=K,nrow=N) - 
@@ -370,15 +371,17 @@ DrawBetaMBD_LNIRT <- function(theta,alpha,Z,mu,sigma,MBDY){
 #prior mu,sigma
   N		<- nrow(Z)
   K 		<- ncol(Z) 
-  alphaT	<- matrix(-alpha,ncol=K,nrow=N,byrow=T)*MBDY
-  thetaT	<- matrix(theta,ncol=K,nrow=N,byrow=F)
-  Z 		<- matrix(Z-alphaT*thetaT,ncol=K,nrow=N)*MBDY	
-  XX		<- alphaT
+  thetaT	<- matrix(theta,ncol=K,nrow=N,byrow=F)*matrix(alpha,ncol=K,nrow=N,byrow=T)
+  Z 		<- matrix(Z-thetaT,ncol=K,nrow=N)*MBDY	
+  XX		<- matrix(-alpha,ncol=K,nrow=N,byrow=T)*MBDY	
   pvar	<- diag(t(XX)%*%XX) + 1/sigma[1,1]
   betahat <- diag(t(XX)%*%Z)
   mu		<- (betahat + mu/sigma[1,1])/pvar
   beta	<-  rnorm(K,mean=mu,sd=sqrt(1/pvar))
 	
+	#beta[which(beta > 4)] <- 4 ##restrict upperbound
+	#beta[which(beta < -4)] <- -4 ##restrict lowerbound
+
 	return(beta)
 }
 
@@ -454,7 +457,9 @@ DrawAlphaMBD_LNIRT <- function(theta,beta,Z,mu,sigma,MBDY){
   alphahat <- diag(t(XX)%*%Z)
   mu		<- (alphahat + mu/sigma[1,1])/pvar
   alpha	<-  rnorm(K,mean=mu,sd=sqrt(1/pvar))
-	
+
+	##alpha[which(alpha > 4)] <- 4 ##restrict upperbound
+
 	return(alpha)
 }
 
