@@ -1,8 +1,9 @@
 #' Log-normal response time IRT modelling
 #' 
 #' @importFrom MASS mvrnorm
+#' @importFrom methods hasArg
 #' @importFrom stats ks.test pchisq pgamma pnorm qnorm rbeta
-#' rbinom rchisq rgamma rlnorm rnorm runif var
+#' rbinom rchisq rgamma rlnorm rnorm runif var cov2cor sd
 #' @importFrom utils flush.console
 #' 
 #' @param RT
@@ -812,7 +813,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data, XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT)
     }
     
-    class(out) <- "LNIRT"
+    class(out) <- c("LNIRT", "list")
     return(out)
     
 }
