@@ -87,6 +87,7 @@ summary.LNIRT <- function(object, ...)
                                                                                                                                          3, ], 2, mean), 3), round(apply(object$MSI[bi:XG, 4, ], 2, mean), 3)), ncol = 4, nrow = 4, byrow = TRUE)
   sepSdiscr2 <- matrix(c(round(sqrt(apply(object$MSI[bi:XG, 1, ], 2, var)), 3), round(sqrt(apply(object$MSI[bi:XG, 2, ], 2, var)), 3), round(sqrt(apply(object$MSI[bi:XG, 
                                                                                                                                                           3, ], 2, var)), 3), round(sqrt(apply(object$MSI[bi:XG, 4, ], 2, var)), 3)), ncol = 4, nrow = 4, byrow = TRUE)
+  diag(pSdiscr2)[which(diag(pSdiscr2)==0)] <- 10e-10 
   sds <- sqrt(diag(pSdiscr2))
   SigmaIcor <- round(pSdiscr2/(sds %*% t(sds)), 3)
   

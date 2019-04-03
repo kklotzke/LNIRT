@@ -1,7 +1,7 @@
 Package: LNIRT
 Type: Package
 Title: LogNormal Response Time Item Response Theory Models
-Version: 0.4.0
+Version: 0.4.1
 Author: Jean-Paul Fox, Konrad Klotzke, Rinke Klein Entink 
 Maintainer: Konrad Klotzke <omd.bms.utwente.stats@gmail.com>
 Imports:
