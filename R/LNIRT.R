@@ -28,6 +28,8 @@
 #' estimate the time-discrimination parameter(default: true).
 #' @param WL
 #' define the time-discrimination parameter as measurement error variance parameter (default: false).
+#' @param ident
+#' set identification rule (default: 2).
 #' @param alpha
 #' an optional vector of pre-defined item-discrimination parameters.
 #' @param beta
@@ -66,11 +68,12 @@
 #' plot(mcmc.object)
 #' }  
 #' @export
-LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT){
+LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT){
   
-    ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times ident =
-    ## 2: Identification : fix mean ability and speed and product item discrimination responses and response times ident <- 1 (default)
-    ident <- 2  #(to investigate person fit using latent scores)
+    ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times 
+    ## ident = 2: Identification : fix mean ability and speed and product item discrimination responses and response times 
+    # ident <- 1 
+    # ident <- 2 # (to investigate person fit using latent scores)
 
     if (!missing(data)) {
       # Try to find RT and Y in the data set first
@@ -178,7 +181,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
     SigmaP0 <- diag(2)
     
     ## population item (ability - speed)
-    ab <- matrix(rnorm(K * 4), ncol = 4) # 1: item discrimination 2: item difficulty 3: time discriminiation 4: time intensity
+    ab <- matrix(rnorm(K * 4), ncol = 4) # 1: item discrimination 2: item difficulty 3: time discrimination 4: time intensity
     ab[, c(1, 3)] <- 1
     muI <- t(matrix(rep(c(1, 0), 2 * K), ncol = K)) # Mean estimates for item parameters 
     muI0 <- muI[1, ]
@@ -394,7 +397,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
         }
         Mguess[ii, ] <- guess0
         
-        # ab - 1: item discrimination 2: item difficulty 3: time discriminiation 4: time intensity
+        # ab - 1: item discrimination 2: item difficulty 3: time discrimination 4: time intensity
         if (WL) {
             ab1 <- cbind(ab[, 1], ab[, 2], 1/sqrt(sigma2), ab[, 4])
         } else {

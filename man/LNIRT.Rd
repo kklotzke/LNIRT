@@ -4,9 +4,28 @@
 \alias{LNIRT}
 \title{Log-normal response time IRT modelling}
 \usage{
-LNIRT(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE,
-  residual = FALSE, td = TRUE, WL = FALSE, alpha, beta, phi, lambda,
-  XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT)
+LNIRT(
+  RT,
+  Y,
+  data,
+  XG = 1000,
+  guess = FALSE,
+  par1 = FALSE,
+  residual = FALSE,
+  td = TRUE,
+  WL = FALSE,
+  ident = 2,
+  alpha,
+  beta,
+  phi,
+  lambda,
+  XPA = NULL,
+  XPT = NULL,
+  XIA = NULL,
+  XIT = NULL,
+  MBDY,
+  MBDT
+)
 }
 \arguments{
 \item{RT}{a Person-x-Item matrix of log-response times (time spent on solving an item).}
@@ -30,6 +49,8 @@ from the environment from which LNIRT is called.}
 \item{td}{estimate the time-discrimination parameter(default: true).}
 
 \item{WL}{define the time-discrimination parameter as measurement error variance parameter (default: false).}
+
+\item{ident}{set identification rule (default: 2).}
 
 \item{alpha}{an optional vector of pre-defined item-discrimination parameters.}
 

@@ -15,6 +15,8 @@
 #' estimate the time-discrimination parameter (default: true).
 #' @param WL
 #' define the time-discrimination parameter as measurement error variance parameter (default: false).
+#' @param ident
+#' set identification rule (default: 2).
 #' @param XPT
 #' an optional matrix of predictors for the person speed parameters.
 #' @param XIT
@@ -37,11 +39,12 @@
 #' plot(mcmc.object)
 #' }  
 #' @export
-LNRT <- function(RT, data, XG = 1000, residual = FALSE, td = TRUE, WL = FALSE, XPT = NULL, XIT = NULL) {
+LNRT <- function(RT, data, XG = 1000, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, XPT = NULL, XIT = NULL) {
     
-  ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times ident =
-  ## 2: Identification : fix mean ability and speed and product item discrimination responses and response times ident <- 1 (default)
-  ident <- 2  #(to investigate person fit using latent scores)
+  ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times 
+  ## ident = 2: Identification : fix mean ability and speed and product item discrimination responses and response times 
+  # ident <- 1 
+  # ident <- 2 # (to investigate person fit using latent scores)
   
   if (!missing(data)) {
     # Try to find RT in the data set first

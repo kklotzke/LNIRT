@@ -4,8 +4,17 @@
 \alias{LNRT}
 \title{Log-normal response time modelling}
 \usage{
-LNRT(RT, data, XG = 1000, residual = FALSE, td = TRUE, WL = FALSE,
-  XPT = NULL, XIT = NULL)
+LNRT(
+  RT,
+  data,
+  XG = 1000,
+  residual = FALSE,
+  td = TRUE,
+  WL = FALSE,
+  ident = 2,
+  XPT = NULL,
+  XIT = NULL
+)
 }
 \arguments{
 \item{RT}{a Person-x-Item matrix of log-response times (time spent on solving an item).}
@@ -22,6 +31,8 @@ from the environment from which LNRT is called.}
 \item{td}{estimate the time-discrimination parameter (default: true).}
 
 \item{WL}{define the time-discrimination parameter as measurement error variance parameter (default: false).}
+
+\item{ident}{set identification rule (default: 2).}
 
 \item{XPT}{an optional matrix of predictors for the person speed parameters.}
 
