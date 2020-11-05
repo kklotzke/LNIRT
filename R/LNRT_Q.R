@@ -11,15 +11,26 @@
 #' explanatory (time) variables for random person speed (default: (1:N.items - 1)/N.items). 
 #' @param XG
 #' the number of MCMC iterations to perform (default: 1000).
+#' @param burnin
+#' the percentage of MCMC iterations to discard as burn-in period (default: 10).
 #' 
 #' @return 
 #' an object of class LNRTQ. 
 #' @export
-LNRTQ <- function(RT, X, XG = 1000){
+LNRTQ <- function(RT, X, XG = 1000, burnin = 10){
   ## RT = log-response time matrix (time spent on solving an item) of dim(N=persons,K=items) 
   ## X = explanatory (time) variables for random person speed 		
   ## XG = number of iterations for the MCMC algorithm
 
+  if (XG <= 0) {
+    print("Error: XG must be > 0")
+    return (NULL)
+  }
+  if ((burnin <= 0) || (burnin >= XG)) {
+    print("Error: burnin must be >= 0 and < XG")
+    return (NULL)
+  }
+  
   N <- nrow(RT) #persons
   K <- ncol(RT) #items (complete design)	
   Q <- 3 #(intercept, slope, quadratic) speed components	
@@ -124,7 +135,7 @@ LNRTQ <- function(RT, X, XG = 1000){
   }	
 
   out <- list(Mzeta=MZ,MZSD =MZ2, MAB=MAB,MmuP = MmuP,MSP= MSP, MmuI=MmuI,
-				MSI = MSI,Msigma2 = Msigma2)
+				MSI = MSI,Msigma2 = Msigma2, XG = XG, burnin = burnin)
   class(out) <- c("LNRTQ", "list")
   return(out)
 }

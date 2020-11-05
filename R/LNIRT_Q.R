@@ -13,16 +13,27 @@
 #' explanatory (time) variables for random person speed (default: (1:N.items - 1)/N.items). 
 #' @param XG
 #' the number of MCMC iterations to perform (default: 1000).
+#' @param burnin
+#' the percentage of MCMC iterations to discard as burn-in period (default: 10).
 #' 
 #' @return 
 #' an object of class LNIRTQ. 
 #' @export
-LNIRTQ <- function(Y, RT, X, XG = 1000){
+LNIRTQ <- function(Y, RT, X, XG = 1000, burnin = 10){
   ## Y = response matrix of dim(N=persons,K=items)
   ## RT = log-response time matrix (time spent on solving an item) of dim(N=persons,K=items) 
   ## XG = number of XG iterations for the MCMC algorithm
   ## X = explanatory (time) variables for random person speed 		
 
+  if (XG <= 0) {
+    print("Error: XG must be > 0")
+    return (NULL)
+  }
+  if ((burnin <= 0) || (burnin >= XG)) {
+    print("Error: burnin must be >= 0 and < XG")
+    return (NULL)
+  }
+  
   ## Initialise all parameters
 	  N <- nrow(Y) #persons
 	  K <- ncol(Y) #items (complete design)	
@@ -197,9 +208,9 @@ if(ii > 1000){
 
  if(XG > 1000){
    out <- list(Mtheta=MT, MAB=MAB, MmuP = MmuP,MSP= MSP, MmuI=MmuI, MSI = MSI, Msigma2=Msigma2,lZP=lZP,lZPT=lZPT,
-               EAPresid=EAPresid,EAPKS=EAPKS)
+               EAPresid=EAPresid,EAPKS=EAPKS, XG = XG, burnin = burnin)
   }else{
-	  out<- list(Mtheta=MT, MAB=MAB, MmuP = MmuP,MSP= MSP, MmuI=MmuI, MSI = MSI, Msigma2=Msigma2)
+	  out<- list(Mtheta=MT, MAB=MAB, MmuP = MmuP,MSP= MSP, MmuI=MmuI, MSI = MSI, Msigma2=Msigma2, XG = XG, burnin = burnin)
   }
   
   class(out) <- c("LNIRTQ", "list")

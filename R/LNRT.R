@@ -9,6 +9,8 @@
 #' from the environment from which LNRT is called.
 #' @param XG
 #' the number of MCMC iterations to perform (default: 1000).
+#' @param burnin
+#' the percentage of MCMC iterations to discard as burn-in period (default: 10).
 #' @param residual
 #' compute residuals, requires > 1000 iterations (default: false).
 #' @param td
@@ -39,12 +41,25 @@
 #' plot(mcmc.object)
 #' }  
 #' @export
-LNRT <- function(RT, data, XG = 1000, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, XPT = NULL, XIT = NULL) {
+LNRT <- function(RT, data, XG = 1000, burnin = 10, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, XPT = NULL, XIT = NULL) {
     
   ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times 
   ## ident = 2: Identification : fix mean ability and speed and product item discrimination responses and response times 
   # ident <- 1 
   # ident <- 2 # (to investigate person fit using latent scores)
+  
+  if (XG <= 0) {
+    print("Error: XG must be > 0")
+    return (NULL)
+  }
+  if ((burnin <= 0) || (burnin >= XG)) {
+    print("Error: burnin must be >= 0 and < XG")
+    return (NULL)
+  }
+  if (ident != 1 && ident != 2) {
+    print("Error: ident must be 1 or 2")
+    return (NULL)
+  }
   
   if (!missing(data)) {
     # Try to find RT in the data set first
@@ -351,30 +366,30 @@ LNRT <- function(RT, data, XG = 1000, residual = FALSE, td = TRUE, WL = FALSE, i
   MCMC.Samples$Sigma2 <- Msigma2
   MCMC.Samples$CovMat.Item <- MSI
   
-  Burnin <- round(XG*0.1, 0)
+  XGburnin <- round(XG*burnin/100, 0)
   Post.Means <- list()
   Post.Means$Person.Speed <- MT
   if(ncol(XPT) == 1)
-    Post.Means$Mu.Person.Speed <- mean(MmuP[Burnin:XG,])
+    Post.Means$Mu.Person.Speed <- mean(MmuP[XGburnin:XG,])
   else
-    Post.Means$Mu.Person.Speed <- colMeans(MmuP[Burnin:XG,])
-  Post.Means$Var.Person.Speed <- mean(MSP[Burnin:XG,,])
-  Post.Means$Time.Discrimination <- colMeans(MAB[Burnin:XG,,1])
-  Post.Means$Time.Intensity <- colMeans(MAB[Burnin:XG,,2])
-  Post.Means$Mu.Time.Discrimination <- mean(MmuI[Burnin:XG, 1])
+    Post.Means$Mu.Person.Speed <- colMeans(MmuP[XGburnin:XG,])
+  Post.Means$Var.Person.Speed <- mean(MSP[XGburnin:XG,,])
+  Post.Means$Time.Discrimination <- colMeans(MAB[XGburnin:XG,,1])
+  Post.Means$Time.Intensity <- colMeans(MAB[XGburnin:XG,,2])
+  Post.Means$Mu.Time.Discrimination <- mean(MmuI[XGburnin:XG, 1])
   if(kit == 0)
-    Post.Means$Mu.Time.Intensity <- mean(MmuI[Burnin:XG, 2:(ncol(MmuI))])
+    Post.Means$Mu.Time.Intensity <- mean(MmuI[XGburnin:XG, 2:(ncol(MmuI))])
   else
-    Post.Means$Mu.Time.Intensity <- colMeans(MmuI[Burnin:XG, 2:(ncol(MmuI))])
-  Post.Means$Sigma2 <- colMeans(Msigma2[Burnin:XG, ])
-  Post.Means$CovMat.Item  <- c(round(apply(MSI[Burnin:XG, , 1], 2, mean), 3), round(apply(MSI[Burnin:XG, , 2], 2, mean), 3))
+    Post.Means$Mu.Time.Intensity <- colMeans(MmuI[XGburnin:XG, 2:(ncol(MmuI))])
+  Post.Means$Sigma2 <- colMeans(Msigma2[XGburnin:XG, ])
+  Post.Means$CovMat.Item  <- c(round(apply(MSI[XGburnin:XG, , 1], 2, mean), 3), round(apply(MSI[XGburnin:XG, , 2], 2, mean), 3))
 
   if (XG > 1000 && residual) {
       out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, lZP = lZP, lZPT = lZPT, Msigma2 = Msigma2, 
-          theta = theta, sigma2 = sigma2, lZI = lZI, EAPresid = EAPresid, EAPKS = EAPKS, RT = RT, EAPCP = EAPCP, td = td, WL = WL, data = data, XPT = XPT, XIT = XIT)
+          theta = theta, sigma2 = sigma2, lZI = lZI, EAPresid = EAPresid, EAPKS = EAPKS, RT = RT, EAPCP = EAPCP, td = td, WL = WL, data = data, XPT = XPT, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
   } else {
       out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Msigma2 = Msigma2, theta = theta, sigma2 = sigma2, 
-          RT = RT, td = td, WL = WL, data = data, XPT = XPT, XIT = XIT)
+          RT = RT, td = td, WL = WL, data = data, XPT = XPT, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
   }
   
   class(out) <- c("LNRT", "list")

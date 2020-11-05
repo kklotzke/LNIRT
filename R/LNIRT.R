@@ -18,6 +18,8 @@
 #' from the environment from which LNIRT is called.
 #' @param XG
 #' the number of MCMC iterations to perform (default: 1000).
+#' @param burnin
+#' the percentage of MCMC iterations to discard as burn-in period (default: 10).
 #' @param guess 
 #' include guessing parameters in the IRT model (default: false).
 #' @param par1
@@ -68,13 +70,26 @@
 #' plot(mcmc.object)
 #' }  
 #' @export
-LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT){
+LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT){
   
     ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times 
     ## ident = 2: Identification : fix mean ability and speed and product item discrimination responses and response times 
     # ident <- 1 
     # ident <- 2 # (to investigate person fit using latent scores)
 
+    if (XG <= 0) {
+      print("Error: XG must be > 0")
+      return (NULL)
+    }
+    if ((burnin <= 0) || (burnin >= XG)) {
+      print("Error: burnin must be >= 0 and < XG")
+      return (NULL)
+    }
+    if (ident != 1 && ident != 2) {
+      print("Error: ident must be 1 or 2")
+      return (NULL)
+    }
+  
     if (!missing(data)) {
       # Try to find RT and Y in the data set first
       tryCatch(RT <- eval(substitute(RT), data), error=function(e) NULL)
@@ -762,41 +777,41 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
     MCMC.Samples$Sigma2 <- Msigma2
     MCMC.Samples$CovMat.Item <- MSI
     
-    Burnin <- round(XG*0.1, 0)
+    XGburnin <- round(XG*burnin/100, 0)
     Post.Means <- list()
     Post.Means$Person.Ability <- MT[,1]
     Post.Means$Person.Speed <- MT[,2]
     if(ncol(XPA) == 1)
-      Post.Means$Mu.Person.Ability <- mean(MmuP[Burnin:XG,1])
+      Post.Means$Mu.Person.Ability <- mean(MmuP[XGburnin:XG,1])
     else
-      Post.Means$Mu.Person.Ability <- colMeans(MmuP[Burnin:XG,1:ncol(XPA)])
+      Post.Means$Mu.Person.Ability <- colMeans(MmuP[XGburnin:XG,1:ncol(XPA)])
     if(ncol(XPT) == 1)
-      Post.Means$Mu.Person.Speed <- mean(MmuP[Burnin:XG,(ncol(XPA)+1):(ncol(XPA) + ncol(XPT))])
+      Post.Means$Mu.Person.Speed <- mean(MmuP[XGburnin:XG,(ncol(XPA)+1):(ncol(XPA) + ncol(XPT))])
     else
-      Post.Means$Mu.Person.Speed <- colMeans(MmuP[Burnin:XG,(ncol(XPA)+1):(ncol(XPA) + ncol(XPT))])
-    Post.Means$Var.Person.Ability <- mean(MSP[Burnin:XG,1,1])
-    Post.Means$Var.Person.Speed <- mean(MSP[Burnin:XG,2,2])
-    Post.Means$Cov.Person.Ability.Speed <- mean(MSP[Burnin:XG,1,2])
-    Post.Means$Item.Discrimination <- colMeans(MAB[Burnin:XG,,1])
-    Post.Means$Item.Difficulty <- colMeans(MAB[Burnin:XG,,2])
-    Post.Means$Time.Discrimination <- colMeans(MAB[Burnin:XG,,3])
-    Post.Means$Time.Intensity <- colMeans(MAB[Burnin:XG,,4])
-    Post.Means$Mu.Item.Discrimination <- mean(MmuI[Burnin:XG,1])
+      Post.Means$Mu.Person.Speed <- colMeans(MmuP[XGburnin:XG,(ncol(XPA)+1):(ncol(XPA) + ncol(XPT))])
+    Post.Means$Var.Person.Ability <- mean(MSP[XGburnin:XG,1,1])
+    Post.Means$Var.Person.Speed <- mean(MSP[XGburnin:XG,2,2])
+    Post.Means$Cov.Person.Ability.Speed <- mean(MSP[XGburnin:XG,1,2])
+    Post.Means$Item.Discrimination <- colMeans(MAB[XGburnin:XG,,1])
+    Post.Means$Item.Difficulty <- colMeans(MAB[XGburnin:XG,,2])
+    Post.Means$Time.Discrimination <- colMeans(MAB[XGburnin:XG,,3])
+    Post.Means$Time.Intensity <- colMeans(MAB[XGburnin:XG,,4])
+    Post.Means$Mu.Item.Discrimination <- mean(MmuI[XGburnin:XG,1])
     if(kia == 0)
-      Post.Means$Mu.Item.Difficulty <- mean(MmuI[Burnin:XG,2:(2+kia)])
+      Post.Means$Mu.Item.Difficulty <- mean(MmuI[XGburnin:XG,2:(2+kia)])
     else 
-      Post.Means$Mu.Item.Difficulty <- colMeans(MmuI[Burnin:XG,2:(2+kia)])
-    Post.Means$Mu.Time.Discrimination <- mean(MmuI[Burnin:XG,2+kia+1])
+      Post.Means$Mu.Item.Difficulty <- colMeans(MmuI[XGburnin:XG,2:(2+kia)])
+    Post.Means$Mu.Time.Discrimination <- mean(MmuI[XGburnin:XG,2+kia+1])
     if(kit == 0)
-      Post.Means$Mu.Time.Intensity <- mean(MmuI[Burnin:XG,(2+kia+1+1):(ncol(MmuI))])
+      Post.Means$Mu.Time.Intensity <- mean(MmuI[XGburnin:XG,(2+kia+1+1):(ncol(MmuI))])
     else
-      Post.Means$Mu.Time.Intensity <- colMeans(MmuI[Burnin:XG,(2+kia+1+1):(ncol(MmuI))])
-    Post.Means$Sigma2 <- colMeans(Msigma2[Burnin:XG, ])
-    Post.Means$CovMat.Item  <- matrix(c(round(apply(MSI[Burnin:XG, 1, ], 2, mean), 3), 
-                                        round(apply(MSI[Burnin:XG, 2, ], 2, mean), 3), round(apply(MSI[Burnin:XG, 3, ], 2, mean), 3), 
-                                        round(apply(MSI[Burnin:XG, 4, ], 2, mean), 3)), ncol = 4, nrow = 4, byrow = TRUE)
+      Post.Means$Mu.Time.Intensity <- colMeans(MmuI[XGburnin:XG,(2+kia+1+1):(ncol(MmuI))])
+    Post.Means$Sigma2 <- colMeans(Msigma2[XGburnin:XG, ])
+    Post.Means$CovMat.Item  <- matrix(c(round(apply(MSI[XGburnin:XG, 1, ], 2, mean), 3), 
+                                        round(apply(MSI[XGburnin:XG, 2, ], 2, mean), 3), round(apply(MSI[XGburnin:XG, 3, ], 2, mean), 3), 
+                                        round(apply(MSI[XGburnin:XG, 4, ], 2, mean), 3)), ncol = 4, nrow = 4, byrow = TRUE)
     if (guess)
-      Post.Means$Item.Guessing <- colMeans(Mguess[Burnin:XG,])
+      Post.Means$Item.Guessing <- colMeans(Mguess[XGburnin:XG,])
     else
       Post.Means$Item.Guessing <- NULL
     
@@ -806,14 +821,14 @@ LNIRT <- function(RT, Y, data, XG = 1000, guess = FALSE, par1 = FALSE, residual 
             out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, 
                 lZP = lZP, lZPT = lZPT, lZPA = lZPA, lZI = lZI, EAPresid = EAPresid, EAPresidA = EAPresidA, EAPKS = EAPKS, EAPKSA = EAPKSA, PFl = PFl, 
                 PFlp = PFlp, IFl = IFl, IFlp = IFlp, EAPl0 = EAPl0, RT = RT, Y = Y, EAPCP1 = EAPCP1, EAPCP2 = EAPCP2, EAPCP3 = EAPCP3, WL = WL, td = td, guess = guess, par1 = par1, data = data, 
-                XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT)
+                XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
         } else {
             out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, 
-                RT = RT, Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data, XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT)
+                RT = RT, Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data, XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
         }
     } else {
         out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, RT = RT, 
-            Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data, XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT)
+            Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data, XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
     }
     
     class(out) <- c("LNIRT", "list")
