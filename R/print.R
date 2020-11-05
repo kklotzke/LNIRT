@@ -7,7 +7,12 @@ print.summary.LNIRT <- function(x, ...)
   } else {
     cat("\n", "Log-Normal RT-IRT Modeling, 2013, J.-P. Fox")
   }
-  cat("\n", "Summary of results")
+  cat("\n\n", rep('-', 20))
+  cat("\n", "MCMC iterations:\t", x$XG)
+  cat("\n", "Burn-in period:\t", paste(x$burnin, "%", sep = ""))
+  cat("\n", rep('-', 20))
+  
+  cat("\n\n", "Summary of results")
   
   if (x$simv) {
     cat("\n\n\t", "Item Discrimination parameter", "\t", "Item Difficulty parameter", "\n")
@@ -714,7 +719,12 @@ print.summary.LNRT <- function(x, ...)
   } else {
     cat("\n", "Log-Normal RT Modeling, 2013, J.P. Fox")
   }
-  cat("\n", "Summary of results")
+  cat("\n\n", rep('-', 20))
+  cat("\n", "MCMC iterations:\t", x$XG)
+  cat("\n", "Burn-in period:\t", paste(x$burnin, "%", sep = ""))
+  cat("\n", rep('-', 20))
+  
+  cat("\n\n", "Summary of results")
   
   
   if (x$gammamodel) {

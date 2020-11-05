@@ -8,6 +8,7 @@ LNRT(
   RT,
   data,
   XG = 1000,
+  burnin = 10,
   residual = FALSE,
   td = TRUE,
   WL = FALSE,
@@ -25,6 +26,8 @@ If the RT variable cannot be found in the list, or if no data object is given, t
 from the environment from which LNRT is called.}
 
 \item{XG}{the number of MCMC iterations to perform (default: 1000).}
+
+\item{burnin}{the percentage of MCMC iterations to discard as burn-in period (default: 10).}
 
 \item{residual}{compute residuals, requires > 1000 iterations (default: false).}
 

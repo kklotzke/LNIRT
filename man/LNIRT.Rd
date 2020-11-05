@@ -9,6 +9,7 @@ LNIRT(
   Y,
   data,
   XG = 1000,
+  burnin = 10,
   guess = FALSE,
   par1 = FALSE,
   residual = FALSE,
@@ -39,6 +40,8 @@ If the required variables cannot be found in the list, or if no data object is g
 from the environment from which LNIRT is called.}
 
 \item{XG}{the number of MCMC iterations to perform (default: 1000).}
+
+\item{burnin}{the percentage of MCMC iterations to discard as burn-in period (default: 10).}
 
 \item{guess}{include guessing parameters in the IRT model (default: false).}
 

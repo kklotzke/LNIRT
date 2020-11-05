@@ -58,8 +58,8 @@ summary.LNIRT <- function(object, ...)
   
   N <- length(object$Mtheta[, 1])
   K <- ncol(object$MAB[, , 1])
-  XG <- length(object$MAB[, 1, 1])
-  bi <- round(0.1 * XG, 0)  #burnin
+  XG <- object$XG #length(object$MAB[, 1, 1])
+  bi <- round(XG * object$burnin/100, 0)  #burnin
   
   idiscr <- apply(object$MAB[bi:XG, , 1], 2, mean)
   idiff <- apply(object$MAB[bi:XG, , 2], 2, mean)
@@ -114,7 +114,7 @@ summary.LNIRT <- function(object, ...)
   }
   
   out <- list(Mtheta = object$Mtheta, MTSD = object$MTSD, MAB = object$MAB, MmuP = object$MmuP, MSP = object$MSP, MmuI = object$MmuI, MSI = object$MSI, Mguess = object$Mguess, Msigma2 = object$Msigma2, 
-              RT = object$RT, Y = object$Y, simv = simv, gammamodel = gammamodel, WL = object$WL, td = object$td, guess = object$guess, par1 = object$par1, N = N, K = K, XG = XG, bi = bi, idiscr = idiscr, idiff = idiff, tdiscr = tdiscr, tintens = tintens,
+              RT = object$RT, Y = object$Y, simv = simv, gammamodel = gammamodel, WL = object$WL, td = object$td, guess = object$guess, par1 = object$par1, N = N, K = K, XG = XG, bi = bi, burnin = object$burnin, ident = object$ident, idiscr = idiscr, idiff = idiff, tdiscr = tdiscr, tintens = tintens,
               seidiscr = seidiscr, seidiff = seidiff, setdiscr = setdiscr, setintens = setintens, iguess = iguess, seiguess = seiguess, pdiscr2 = pdiscr2, sepdiscr2 = sepdiscr2, pSdiscr2 = pSdiscr2, sepSdiscr2 = sepSdiscr2,
               SigmaIcor = SigmaIcor, ppers2 = ppers2, seppers2 = seppers2, pSpers2 = pSpers2, sepSpers2 = sepSpers2, SigmaPcor = SigmaPcor, estsigma2 = estsigma2, seestsigma2 = seestsigma2, estnug = estnug, seestnug = seestnug, 
               data = object$data, 
@@ -169,8 +169,10 @@ summary.LNRT <- function(object, ...)
 
   N <- length(object$Mtheta)
   K <- ncol(object$MAB[, , 1])
-  XG <- length(object$MAB[, 1, 1])
-  bi <- round(0.1 * XG, 0)  #burnin
+  #XG <- length(object$MAB[, 1, 1])
+  #bi <- round(0.1 * XG, 0)  #burnin
+  XG <- object$XG #length(object$MAB[, 1, 1])
+  bi <- round(XG * object$burnin/100, 0)  #burnin
   
   ## item parameter estimates
   
@@ -231,8 +233,7 @@ summary.LNRT <- function(object, ...)
   
   out <- list(Mtheta = object$Mtheta, MTSD = object$MTSD, MAB = object$MAB, MmuP = object$MmuP, MSP = object$MSP, MmuI = object$MmuI, MSI = object$MSI, Msigma2 = object$Msigma2, 
               theta = object$theta, sigma2 = object$sigma2, RT = object$RT, simv = simv, gammamodel = gammamodel, WL = object$WL, Discrimination = object$Discrimination, N = N, K = K, XG = XG, bi = bi, 
-              tdiscr = tdiscr, tintens = tintens, setdiscr = setdiscr, setintens = setintens, pdiscr = pdiscr, sepdiscr = sepdiscr, pSdiscr = pSdiscr, sepSdiscr = sepSdiscr,
-              ppers = ppers, seppers = seppers, pSpers = pSpers, sepSpers = sepSpers, estsigma2 = estsigma2, seestsigma2 = seestsigma2, estnug = estnug, seestnug = seestnug, data = object$data,
+              burnin = object$burnin, ident = object$ident, tdiscr = tdiscr, tintens = tintens, setdiscr = setdiscr, setintens = setintens, pdiscr = pdiscr, sepdiscr = sepdiscr, pSdiscr = pSdiscr, sepSdiscr = sepSdiscr, ppers = ppers, seppers = seppers, pSpers = pSpers, sepSpers = sepSpers, estsigma2 = estsigma2, seestsigma2 = seestsigma2, estnug = estnug, seestnug = seestnug, data = object$data,
               nopredictorp = nopredictorp, nopredictori = nopredictori, predictort = predictort, predictorit = predictorit, kt = kt, kit = kit)
   if ("lZP" %in% names(object)) {
     tmp <- list(lZP = object$lZP, lZPT = object$lZPT, lZI = object$lZI, EAPresid = object$EAPresid, EAPKS = object$EAPKS, EAPCP = object$EAPCP)

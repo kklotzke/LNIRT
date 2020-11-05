@@ -48,8 +48,10 @@ summaryIRTQ <- function(out, data){
     
   N <- nrow(out$Mtheta)
   K <- ncol(out$MAB[,,1])
-  XG <- length(out$MAB[,1,1])
-  bi <- round(.10*XG,0)  #burnin
+  XG <- object$XG #length(object$MAB[, 1, 1])
+  bi <- round(XG * object$burnin/100, 0)  #burnin
+  #XG <- length(out$MAB[,1,1])
+  #bi <- round(.10*XG,0)  #burnin
   
   #######################################
   
@@ -180,7 +182,13 @@ summaryIRTQ <- function(out, data){
   if(Qmodel){
     cat("\n", "LNIRT-Q Modeling, 2013, J.P. Fox")
   }
-  cat("\n", "Summary of results")
+  
+  cat("\n\n", rep('-', 20))
+  cat("\n", "MCMC iterations:\t", out$XG)
+  cat("\n", "Burn-in period:\t", paste(out$burnin, "%", sep = ""))
+  cat("\n", rep('-', 20))
+  
+  cat("\n\n", "Summary of results")
   
   
   if(simv){

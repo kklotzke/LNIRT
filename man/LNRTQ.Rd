@@ -4,7 +4,7 @@
 \alias{LNRTQ}
 \title{Log-normal response time modelling with variable person speed (intercept, trend, quadratic)}
 \usage{
-LNRTQ(RT, X, XG = 1000)
+LNRTQ(RT, X, XG = 1000, burnin = 10)
 }
 \arguments{
 \item{RT}{a Person-x-Item matrix of log-response times (time spent on solving an item).}
@@ -12,6 +12,8 @@ LNRTQ(RT, X, XG = 1000)
 \item{X}{explanatory (time) variables for random person speed (default: (1:N.items - 1)/N.items).}
 
 \item{XG}{the number of MCMC iterations to perform (default: 1000).}
+
+\item{burnin}{the percentage of MCMC iterations to discard as burn-in period (default: 10).}
 }
 \value{
 an object of class LNRTQ.
