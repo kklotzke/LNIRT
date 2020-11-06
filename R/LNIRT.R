@@ -81,8 +81,8 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, guess = FALSE, par1 = FAL
       print("Error: XG must be > 0")
       return (NULL)
     }
-    if ((burnin <= 0) || (burnin >= XG)) {
-      print("Error: burnin must be >= 0 and < XG")
+    if ((burnin <= 0) || (burnin >= 100)) {
+      print("Error: burnin must be >= 0 and < 100")
       return (NULL)
     }
     if (ident != 1 && ident != 2) {
