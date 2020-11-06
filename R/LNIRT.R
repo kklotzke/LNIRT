@@ -109,6 +109,19 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = F
     } else {
       data = NULL
     }
+  
+    if (!is.null(XPA)) {
+      XPA <- as.matrix(XPA)
+    }
+    if (!is.null(XPT)) {
+      XPT <- as.matrix(XPT)
+    }
+    if (!is.null(XIA)) {
+      XIA <- as.matrix(XIA)
+    }
+    if (!is.null(XIT)) {
+      XIT <- as.matrix(XIT)
+    }
     
     PNO <- guess # TRUE: guessing included
     #WL <- 1  #time discrimination = 1/sqrt(error variance)

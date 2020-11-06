@@ -72,6 +72,13 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, XGresid = 1000, residual = FA
     data = NULL
   }
   
+  if (!is.null(XPT)) {
+    XPT <- as.matrix(XPT)
+  }
+  if (!is.null(XIT)) {
+    XIT <- as.matrix(XIT)
+  }
+  
   N <- nrow(RT)
   K <- ncol(RT)
   
