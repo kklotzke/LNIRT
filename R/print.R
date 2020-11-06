@@ -7,10 +7,24 @@ print.summary.LNIRT <- function(x, ...)
   } else {
     cat("\n", "Log-Normal RT-IRT Modeling, 2013, J.-P. Fox")
   }
-  cat("\n\n", rep('-', 20))
+  cat("\n\n", rep('-', 38))
   cat("\n", "MCMC iterations:\t", x$XG)
   cat("\n", "Burn-in period:\t", paste(x$burnin, "%", sep = ""))
-  cat("\n", rep('-', 20))
+  if (x$ident == 1) {
+    cat("\n", "Identification:\t", "mu_beta = mu_lambda = 0")
+    if (!x$WL && x$td)
+      cat("\n", "\t\t\t prod(alpha) = prod(phi) = 1")
+    else 
+      cat("\n", "\t\t\t prod(alpha) = 1")
+  }
+  else if (x$ident == 2) {
+    cat("\n", "Identification:\t", "mu_theta = mu_zeta = 0")
+    if (!x$WL && x$td)
+      cat("\n", "\t\t\t prod(alpha) = prod(phi) = 1")
+    else 
+      cat("\n", "\t\t\t prod(alpha) = 1")
+  }
+  cat("\n", rep('-', 38))
   
   cat("\n\n", "Summary of results")
   
@@ -719,10 +733,14 @@ print.summary.LNRT <- function(x, ...)
   } else {
     cat("\n", "Log-Normal RT Modeling, 2013, J.P. Fox")
   }
-  cat("\n\n", rep('-', 20))
+  cat("\n\n", rep('-', 38))
   cat("\n", "MCMC iterations:\t", x$XG)
   cat("\n", "Burn-in period:\t", paste(x$burnin, "%", sep = ""))
-  cat("\n", rep('-', 20))
+  if (x$ident == 2) {
+    cat("\n", "Identification:\t", "mu_zeta = 0")
+    if (!x$WL && x$td)
+      cat("\n", "\t\t\t prod(phi) = 1")  }
+  cat("\n", rep('-', 38))
   
   cat("\n\n", "Summary of results")
   

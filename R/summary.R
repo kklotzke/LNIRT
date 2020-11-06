@@ -232,7 +232,7 @@ summary.LNRT <- function(object, ...)
   
   
   out <- list(Mtheta = object$Mtheta, MTSD = object$MTSD, MAB = object$MAB, MmuP = object$MmuP, MSP = object$MSP, MmuI = object$MmuI, MSI = object$MSI, Msigma2 = object$Msigma2, 
-              theta = object$theta, sigma2 = object$sigma2, RT = object$RT, simv = simv, gammamodel = gammamodel, WL = object$WL, Discrimination = object$Discrimination, N = N, K = K, XG = XG, bi = bi, 
+              theta = object$theta, sigma2 = object$sigma2, RT = object$RT, simv = simv, gammamodel = gammamodel, td = object$td, WL = object$WL, Discrimination = object$Discrimination, N = N, K = K, XG = XG, bi = bi,
               burnin = object$burnin, ident = object$ident, tdiscr = tdiscr, tintens = tintens, setdiscr = setdiscr, setintens = setintens, pdiscr = pdiscr, sepdiscr = sepdiscr, pSdiscr = pSdiscr, sepSdiscr = sepSdiscr, ppers = ppers, seppers = seppers, pSpers = pSpers, sepSpers = sepSpers, estsigma2 = estsigma2, seestsigma2 = seestsigma2, estnug = estnug, seestnug = seestnug, data = object$data,
               nopredictorp = nopredictorp, nopredictori = nopredictori, predictort = predictort, predictorit = predictorit, kt = kt, kit = kit)
   if ("lZP" %in% names(object)) {

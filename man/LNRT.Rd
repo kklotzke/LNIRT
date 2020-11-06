@@ -12,7 +12,6 @@ LNRT(
   residual = FALSE,
   td = TRUE,
   WL = FALSE,
-  ident = 2,
   XPT = NULL,
   XIT = NULL
 )
@@ -34,8 +33,6 @@ from the environment from which LNRT is called.}
 \item{td}{estimate the time-discrimination parameter (default: true).}
 
 \item{WL}{define the time-discrimination parameter as measurement error variance parameter (default: false).}
-
-\item{ident}{set identification rule (default: 2).}
 
 \item{XPT}{an optional matrix of predictors for the person speed parameters.}
 
