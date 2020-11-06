@@ -10,6 +10,7 @@ LNIRT(
   data,
   XG = 1000,
   burnin = 10,
+  XGresid = 1000,
   guess = FALSE,
   par1 = FALSE,
   residual = FALSE,
@@ -43,11 +44,13 @@ from the environment from which LNIRT is called.}
 
 \item{burnin}{the percentage of MCMC iterations to discard as burn-in period (default: 10).}
 
+\item{XGresid}{the number of MCMC iterations to perform before residuals are computed (default: 1000).}
+
 \item{guess}{include guessing parameters in the IRT model (default: false).}
 
 \item{par1}{use alternative parameterization (default: false).}
 
-\item{residual}{compute residuals, requires > 1000 iterations (default: false).}
+\item{residual}{compute residuals, >1000 iterations are recommended (default: false).}
 
 \item{td}{estimate the time-discrimination parameter(default: true).}
 

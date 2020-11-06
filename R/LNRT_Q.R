@@ -23,11 +23,11 @@ LNRTQ <- function(RT, X, XG = 1000, burnin = 10){
   ## XG = number of iterations for the MCMC algorithm
 
   if (XG <= 0) {
-    print("Error: XG must be > 0")
+    print("Error: XG must be > 0.")
     return (NULL)
   }
   if ((burnin <= 0) || (burnin >= XG)) {
-    print("Error: burnin must be >= 0 and < XG")
+    print("Error: burn-in period must be between 0% and 100%.")
     return (NULL)
   }
   

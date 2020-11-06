@@ -20,12 +20,14 @@
 #' the number of MCMC iterations to perform (default: 1000).
 #' @param burnin
 #' the percentage of MCMC iterations to discard as burn-in period (default: 10).
+#' @param XGresid
+#' the number of MCMC iterations to perform before residuals are computed (default: 1000). 
 #' @param guess 
 #' include guessing parameters in the IRT model (default: false).
 #' @param par1
 #' use alternative parameterization (default: false).
 #' @param residual
-#' compute residuals, requires > 1000 iterations (default: false).
+#' compute residuals, >1000 iterations are recommended (default: false).
 #' @param td
 #' estimate the time-discrimination parameter(default: true).
 #' @param WL
@@ -70,7 +72,7 @@
 #' plot(mcmc.object)
 #' }  
 #' @export
-LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT){
+LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT){
   
     ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times 
     ## ident = 2: Identification : fix mean ability and speed and product item discrimination responses and response times 
@@ -78,16 +80,20 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, guess = FALSE, par1 = FAL
     # ident <- 2 # (to investigate person fit using latent scores)
 
     if (XG <= 0) {
-      print("Error: XG must be > 0")
+      print("Error: XG must be > 0.")
       return (NULL)
     }
     if ((burnin <= 0) || (burnin >= 100)) {
-      print("Error: burnin must be >= 0 and < 100")
+      print("Error: burn-in period must be between 0% and 100%.")
       return (NULL)
     }
     if (ident != 1 && ident != 2) {
-      print("Error: ident must be 1 or 2")
+      print("Error: ident must be 1 or 2.")
       return (NULL)
+    }
+    if (residual && (XGresid >= XG || XGresid <= 0)) {
+      print("Warning: XGresid must be < XG and > 0. Residuals will not be computed.")
+      residual <- FALSE
     }
   
     if (!missing(data)) {
@@ -239,14 +245,14 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, guess = FALSE, par1 = FAL
     EAPtheta <- matrix(0, ncol = 2, nrow = N)
     EAPsigma2 <- matrix(0, ncol = 1, nrow = K)
     
-    if (XG > 1000) {
-        MPF <- matrix(0, ncol = N, nrow = XG - 1000)
-        MPFb <- matrix(0, ncol = N, nrow = XG - 1000)
-        MPFp <- matrix(0, ncol = N, nrow = XG - 1000)
-        MPFbp <- matrix(0, ncol = N, nrow = XG - 1000)
+    if (XG > XGresid) {
+        MPF <- matrix(0, ncol = N, nrow = XG - XGresid)
+        MPFb <- matrix(0, ncol = N, nrow = XG - XGresid)
+        MPFp <- matrix(0, ncol = N, nrow = XG - XGresid)
+        MPFbp <- matrix(0, ncol = N, nrow = XG - XGresid)
         
-        MPFTb <- matrix(0, ncol = N, nrow = XG - 1000)
-        MPFTbp <- matrix(0, ncol = N, nrow = XG - 1000)
+        MPFTb <- matrix(0, ncol = N, nrow = XG - XGresid)
+        MPFTbp <- matrix(0, ncol = N, nrow = XG - XGresid)
     }
     EAPbeta <- rep(0, K)
     EAPalpha <- rep(0, K)
@@ -597,7 +603,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, guess = FALSE, par1 = FAL
         SigmaI <- rwishart(4 + K, chol2inv(chol(SS)))$IW
         MSI[ii, , ] <- SigmaI
         
-        if (ii > 1000) {
+        if (ii > XGresid) {
             EAPmuI <- (muI[1, 4] + (iis - 1) * EAPmuI)/iis
             EAPsigma2 <- (sigma2 + (iis - 1) * EAPsigma2)/iis
             EAPlambda <- (ab[, 4] + (iis - 1) * EAPlambda)/iis
@@ -737,16 +743,14 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, guess = FALSE, par1 = FAL
     MT <- MT/XG # Posterior mean theta
     MT2 <- sqrt(MT2/XG - MT^2) # Posterior mean sd(theta)
     
-    if (ii > 1000) {
-        if (residual) {
-            lZP <- lZP/(XG - 1000)
-            lZPT <- lZPT/(XG - 1000)
-            lZI <- lZI/(XG - 1000)
-            EAPresid <- EAPresid/(XG - 1000)
-            lZPAT <- lZPAT/(XG - 1000)
-            lZPA <- lZPA/(XG - 1000)
-            lZIA <- lZIA/(XG - 1000)
-        }
+    if (ii > XGresid & residual) {
+        lZP <- lZP/(XG - XGresid)
+        lZPT <- lZPT/(XG - XGresid)
+        lZI <- lZI/(XG - XGresid)
+        EAPresid <- EAPresid/(XG - XGresid)
+        lZPAT <- lZPAT/(XG - XGresid)
+        lZPA <- lZPA/(XG - XGresid)
+        lZIA <- lZIA/(XG - XGresid)
     }
 
     
@@ -816,21 +820,17 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, guess = FALSE, par1 = FAL
       Post.Means$Item.Guessing <- NULL
     
     
-    if (XG > 1000) {
-        if (residual) {
-            out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, 
-                lZP = lZP, lZPT = lZPT, lZPA = lZPA, lZI = lZI, EAPresid = EAPresid, EAPresidA = EAPresidA, EAPKS = EAPKS, EAPKSA = EAPKSA, PFl = PFl, 
-                PFlp = PFlp, IFl = IFl, IFlp = IFlp, EAPl0 = EAPl0, RT = RT, Y = Y, EAPCP1 = EAPCP1, EAPCP2 = EAPCP2, EAPCP3 = EAPCP3, WL = WL, td = td, guess = guess, par1 = par1, data = data, 
-                XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
-        } else {
-            out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, 
-                RT = RT, Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data, XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
-        }
-    } else {
-        out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, RT = RT, 
-            Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data, XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
+    if (XG > XGresid & residual) {
+        out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, 
+            lZP = lZP, lZPT = lZPT, lZPA = lZPA, lZI = lZI, EAPresid = EAPresid, EAPresidA = EAPresidA, EAPKS = EAPKS, EAPKSA = EAPKSA, PFl = PFl, 
+            PFlp = PFlp, IFl = IFl, IFlp = IFlp, EAPl0 = EAPl0, RT = RT, Y = Y, EAPCP1 = EAPCP1, EAPCP2 = EAPCP2, EAPCP3 = EAPCP3, WL = WL, td = td, guess = guess, par1 = par1, data = data, 
+            XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT, XG = XG, burnin = burnin, ident = ident, residual = residual, XGresid = XGresid)
+    } 
+    else {
+        out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, 
+            RT = RT, Y = Y, WL = WL, td = td, guess = guess, par1 = par1, data = data, XPA = XPA, XPT = XPT, XIA = XIA, XIT = XIT, XG = XG, burnin = burnin, ident = ident, residual = residual, XGresid = XGresid)
     }
-    
+
     class(out) <- c("LNIRT", "list")
     return(out)
     

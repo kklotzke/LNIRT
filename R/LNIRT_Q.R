@@ -26,11 +26,11 @@ LNIRTQ <- function(Y, RT, X, XG = 1000, burnin = 10){
   ## X = explanatory (time) variables for random person speed 		
 
   if (XG <= 0) {
-    print("Error: XG must be > 0")
+    print("Error: XG must be > 0.")
     return (NULL)
   }
   if ((burnin <= 0) || (burnin >= XG)) {
-    print("Error: burnin must be >= 0 and < XG")
+    print("Error: burn-in period must be between 0% and 100%.")
     return (NULL)
   }
   

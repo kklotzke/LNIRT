@@ -183,10 +183,10 @@ summaryIRTQ <- function(out, data){
     cat("\n", "LNIRT-Q Modeling, 2013, J.P. Fox")
   }
   
-  cat("\n\n", rep('-', 20))
+  cat("\n\n", rep('-', 38))
   cat("\n", "MCMC iterations:\t", out$XG)
   cat("\n", "Burn-in period:\t", paste(out$burnin, "%", sep = ""))
-  cat("\n", rep('-', 20))
+  cat("\n", rep('-', 38))
   
   cat("\n\n", "Summary of results")
   

@@ -9,6 +9,7 @@ LNRT(
   data,
   XG = 1000,
   burnin = 10,
+  XGresid = 1000,
   residual = FALSE,
   td = TRUE,
   WL = FALSE,
@@ -28,7 +29,9 @@ from the environment from which LNRT is called.}
 
 \item{burnin}{the percentage of MCMC iterations to discard as burn-in period (default: 10).}
 
-\item{residual}{compute residuals, requires > 1000 iterations (default: false).}
+\item{XGresid}{the number of MCMC iterations to perform before residuals are computed (default: 1000).}
+
+\item{residual}{compute residuals, >1000 iterations are recommended (default: false).}
 
 \item{td}{estimate the time-discrimination parameter (default: true).}
 

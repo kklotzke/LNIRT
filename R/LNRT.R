@@ -11,8 +11,10 @@
 #' the number of MCMC iterations to perform (default: 1000).
 #' @param burnin
 #' the percentage of MCMC iterations to discard as burn-in period (default: 10).
+#' @param XGresid
+#' the number of MCMC iterations to perform before residuals are computed (default: 1000). 
 #' @param residual
-#' compute residuals, requires > 1000 iterations (default: false).
+#' compute residuals, >1000 iterations are recommended (default: false).
 #' @param td
 #' estimate the time-discrimination parameter (default: true).
 #' @param WL
@@ -39,7 +41,7 @@
 #' plot(mcmc.object)
 #' }  
 #' @export
-LNRT <- function(RT, data, XG = 1000, burnin = 10, residual = FALSE, td = TRUE, WL = FALSE, XPT = NULL, XIT = NULL) {
+LNRT <- function(RT, data, XG = 1000, burnin = 10, XGresid = 1000, residual = FALSE, td = TRUE, WL = FALSE, XPT = NULL, XIT = NULL) {
     
   ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times 
   ## ident = 2: Identification : fix mean ability and speed and product item discrimination responses and response times 
@@ -47,12 +49,16 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, residual = FALSE, td = TRUE, 
   ident <- 2 # (to investigate person fit using latent scores)
   
   if (XG <= 0) {
-    print("Error: XG must be > 0")
+    print("Error: XG must be > 0.")
     return (NULL)
   }
   if ((burnin <= 0) || (burnin >= 100)) {
-    print("Error: burnin must be >= 0 and < 100")
+    print("Error: burn-in period must be between 0% and 100%.")
     return (NULL)
+  }
+  if (residual && (XGresid >= XG || XGresid <= 0)) {
+    print("Warning: XGresid must be < XG and > 0. Residuals will not be computed.")
+    residual <- FALSE
   }
   
   if (!missing(data)) {
@@ -115,7 +121,7 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, residual = FALSE, td = TRUE, 
   ingroup <- rep(1, N)
   Mingroup <- matrix(0, ncol = 2, nrow = N)
   
-  if (XG > 1000) {
+  if (XG > XGresid) {
       flagged <- matrix(0, ncol = 1, nrow = N)
       ss <- 1
   }
@@ -307,7 +313,7 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, residual = FALSE, td = TRUE, 
       
 
       
-      if (ii > 1000 && residual) {
+      if (ii > XGresid && residual) {
           EAPphi <- (ab[, 1] + (iis - 1) * EAPphi)/iis
           EAPlambda <- (ab[, 2] + (iis - 1) * EAPlambda)/iis
           EAPtheta <- (theta + (iis - 1) * EAPtheta)/iis
@@ -337,11 +343,11 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, residual = FALSE, td = TRUE, 
   
   MT <- MT/XG
   MT2 <- sqrt(MT2/XG - MT^2)
-  if (ii > 1000 && residual) {
-      lZP <- lZP/(XG - 1000)
-      lZPT <- lZPT/(XG - 1000)
-      lZI <- lZI/(XG - 1000)
-      EAPresid <- EAPresid/(XG - 1000)
+  if (ii > XGresid && residual) {
+      lZP <- lZP/(XG - XGresid)
+      lZPT <- lZPT/(XG - XGresid)
+      lZI <- lZI/(XG - XGresid)
+      EAPresid <- EAPresid/(XG - XGresid)
   }
   
   kit <- 0
@@ -378,12 +384,12 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, residual = FALSE, td = TRUE, 
   Post.Means$Sigma2 <- colMeans(Msigma2[XGburnin:XG, ])
   Post.Means$CovMat.Item  <- c(round(apply(MSI[XGburnin:XG, , 1], 2, mean), 3), round(apply(MSI[XGburnin:XG, , 2], 2, mean), 3))
 
-  if (XG > 1000 && residual) {
+  if (XG > XGresid && residual) {
       out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, lZP = lZP, lZPT = lZPT, Msigma2 = Msigma2, 
-          theta = theta, sigma2 = sigma2, lZI = lZI, EAPresid = EAPresid, EAPKS = EAPKS, RT = RT, EAPCP = EAPCP, td = td, WL = WL, data = data, XPT = XPT, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
+          theta = theta, sigma2 = sigma2, lZI = lZI, EAPresid = EAPresid, EAPKS = EAPKS, RT = RT, EAPCP = EAPCP, td = td, WL = WL, data = data, XPT = XPT, XIT = XIT, XG = XG, burnin = burnin, ident = ident, residual = residual, XGresid = XGresid)
   } else {
       out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Msigma2 = Msigma2, theta = theta, sigma2 = sigma2, 
-          RT = RT, td = td, WL = WL, data = data, XPT = XPT, XIT = XIT, XG = XG, burnin = burnin, ident = ident)
+          RT = RT, td = td, WL = WL, data = data, XPT = XPT, XIT = XIT, XG = XG, burnin = burnin, ident = ident, residual = residual, XGresid = XGresid)
   }
   
   class(out) <- c("LNRT", "list")
