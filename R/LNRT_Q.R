@@ -9,6 +9,11 @@
 #' a Person-x-Item matrix of log-response times (time spent on solving an item).
 #' @param X
 #' explanatory (time) variables for random person speed (default: (1:N.items - 1)/N.items). 
+#' @param data
+#' either a list or a simLNIRTQ object containing the response time matrix. 
+#' If a simLNIRTQ object is provided, in the summary the simulated time parameters are shown alongside of the estimates.
+#' If the RT variable cannot be found in the list, or if no data object is given, then the RT variable is taken
+#' from the environment from which LNRTQ is called.
 #' @param XG
 #' the number of MCMC iterations to perform (default: 1000).
 #' @param burnin
@@ -17,7 +22,7 @@
 #' @return 
 #' an object of class LNRTQ. 
 #' @export
-LNRTQ <- function(RT, X, XG = 1000, burnin = 10){
+LNRTQ <- function(RT, X, data, XG = 1000, burnin = 10){
   ## RT = log-response time matrix (time spent on solving an item) of dim(N=persons,K=items) 
   ## X = explanatory (time) variables for random person speed 		
   ## XG = number of iterations for the MCMC algorithm
@@ -30,6 +35,18 @@ LNRTQ <- function(RT, X, XG = 1000, burnin = 10){
     print("Error: burn-in period must be between 0% and 100%.")
     return (NULL)
   }
+  
+  if (!missing(data) && !is.null(data)) {
+    # Try to find RT and Y in the data set first
+    tryCatch(RT <- eval(substitute(RT), data), error=function(e) NULL)
+
+    # Try to find explanatory (time) variables in the data set first
+    tryCatch(X <- eval(substitute(X), data), error=function(e) NULL)
+  } else {
+    data <- NULL
+  }
+  
+  RT <- as.matrix(RT)
   
   N <- nrow(RT) #persons
   K <- ncol(RT) #items (complete design)	
@@ -134,8 +151,12 @@ LNRTQ <- function(RT, X, XG = 1000, burnin = 10){
 	  MZ2[[jj]] <- sqrt(MZ2[[jj]]/XG - MZ[[jj]]^2 ) ## calculate posterior SD of person parameters. 
   }	
 
+  if (!(any(class(data) == "simLNIRTQ"))) {
+    data <- NULL # only attach sim data for summary function
+  }
+  
   out <- list(Mzeta=MZ,MZSD =MZ2, MAB=MAB,MmuP = MmuP,MSP= MSP, MmuI=MmuI,
-				MSI = MSI,Msigma2 = Msigma2, XG = XG, burnin = burnin)
+				MSI = MSI,Msigma2 = Msigma2, XG = XG, burnin = burnin, data = data)
   class(out) <- c("LNRTQ", "list")
   return(out)
 }
