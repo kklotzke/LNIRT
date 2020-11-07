@@ -21,11 +21,15 @@
 #' the number of MCMC iterations to perform (default: 1000).
 #' @param burnin
 #' the percentage of MCMC iterations to discard as burn-in period (default: 10).
+#' @param XGresid
+#' the number of MCMC iterations to perform before residuals are computed (default: 1000). 
+#' @param residual
+#' compute residuals, >1000 iterations are recommended (default: false).
 #' 
 #' @return 
 #' an object of class LNIRTQ. 
 #' @export
-LNIRTQ <- function(Y, RT, X, data, XG = 1000, burnin = 10){
+LNIRTQ <- function(Y, RT, X, data, XG = 1000, burnin = 10, XGresid = 1000, residual = FALSE){
   ## Y = response matrix of dim(N=persons,K=items)
   ## RT = log-response time matrix (time spent on solving an item) of dim(N=persons,K=items) 
   ## XG = number of XG iterations for the MCMC algorithm
@@ -38,6 +42,10 @@ LNIRTQ <- function(Y, RT, X, data, XG = 1000, burnin = 10){
   if ((burnin <= 0) || (burnin >= XG)) {
     print("Error: burn-in period must be between 0% and 100%.")
     return (NULL)
+  }
+  if (residual && (XGresid >= XG || XGresid <= 0)) {
+    print("Warning: XGresid must be < XG and > 0. Residuals will not be computed.")
+    residual <- FALSE
   }
   
   if (!missing(data) && !is.null(data)) {
@@ -197,7 +205,7 @@ LNIRTQ <- function(Y, RT, X, data, XG = 1000, burnin = 10){
 	MSI[ii,,] <- SigmaI
     	MT[1:N,1:4] <- MT[1:N,1:4] + cbind(theta,zeta)
 
-	if(ii > 1000){
+	if(ii > XGresid && residual){
 		EAPlambda <- (ab[,4] + (iis-1)*EAPlambda)/iis
 		EAPzetapred <- (zetapred + (iis-1)*zetapred)/iis
 		EAPphi <- (ab[,3] + (iis-1)*EAPphi)/iis
@@ -225,21 +233,21 @@ LNIRTQ <- function(Y, RT, X, data, XG = 1000, burnin = 10){
   MT <- MT/XG
   ##MT2 <- sqrt(MT2/XG - MT^2 ) ## calculate posterior SD of person parameters. 
   
-if(ii > 1000){ 
-   lZP <- lZP/(XG-1000)
-   lZPT <- lZPT/(XG-1000)
-   EAPresid <- EAPresid/(XG-1000) 	
+if(ii > XGresid && residual){ 
+   lZP <- lZP/(XG-XGresid)
+   lZPT <- lZPT/(XG-XGresid)
+   EAPresid <- EAPresid/(XG-XGresid) 	
 }
   
   if (!(any(class(data) == "simLNIRTQ"))) {
     data <- NULL # only attach sim data for summary function
   }
 
- if(XG > 1000){
+ if(XG > XGresid && residual){
    out <- list(Mtheta=MT, MAB=MAB, MmuP = MmuP,MSP= MSP, MmuI=MmuI, MSI = MSI, Msigma2=Msigma2,lZP=lZP,lZPT=lZPT,
-               EAPresid=EAPresid,EAPKS=EAPKS, XG = XG, burnin = burnin, data = data)
+               EAPresid=EAPresid,EAPKS=EAPKS, XG = XG, burnin = burnin, XGresid = XGresid, data = data)
   }else{
-	  out<- list(Mtheta=MT, MAB=MAB, MmuP = MmuP,MSP= MSP, MmuI=MmuI, MSI = MSI, Msigma2=Msigma2, XG = XG, burnin = burnin, data = data)
+	  out<- list(Mtheta=MT, MAB=MAB, MmuP = MmuP,MSP= MSP, MmuI=MmuI, MSI = MSI, Msigma2=Msigma2, XG = XG, burnin = burnin, XGresid = XGresid, data = data)
   }
   
   class(out) <- c("LNIRTQ", "list")

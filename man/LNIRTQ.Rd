@@ -4,7 +4,16 @@
 \alias{LNIRTQ}
 \title{Log-normal response time IRT modelling with variable person speed (intercept, trend, quadratic)}
 \usage{
-LNIRTQ(Y, RT, X, data, XG = 1000, burnin = 10)
+LNIRTQ(
+  Y,
+  RT,
+  X,
+  data,
+  XG = 1000,
+  burnin = 10,
+  XGresid = 1000,
+  residual = FALSE
+)
 }
 \arguments{
 \item{Y}{a Person-x-Item matrix of responses.}
@@ -22,6 +31,10 @@ from the environment from which LNIRTQ is called.}
 \item{XG}{the number of MCMC iterations to perform (default: 1000).}
 
 \item{burnin}{the percentage of MCMC iterations to discard as burn-in period (default: 10).}
+
+\item{XGresid}{the number of MCMC iterations to perform before residuals are computed (default: 1000).}
+
+\item{residual}{compute residuals, >1000 iterations are recommended (default: false).}
 }
 \value{
 an object of class LNIRTQ.
