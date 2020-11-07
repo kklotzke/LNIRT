@@ -34,6 +34,14 @@ LNIRTQ <- function(Y, RT, X, XG = 1000, burnin = 10){
     return (NULL)
   }
   
+  Y <- as.matrix(Y)
+  RT <- as.matrix(RT)
+  
+  if ((nrow(Y) != nrow(RT)) || (ncol(Y) != ncol(RT)) ) {
+    print("Error: Y and RT must be of equal dimension.")
+    return (NULL)
+  }
+  
   ## Initialise all parameters
 	  N <- nrow(Y) #persons
 	  K <- ncol(Y) #items (complete design)	

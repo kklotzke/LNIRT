@@ -109,18 +109,44 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = F
     } else {
       data = NULL
     }
+  Y <- as.matrix(Y)
+  RT <- as.matrix(RT)
+  
+    if ((nrow(Y) != nrow(RT)) || (ncol(Y) != ncol(RT)) ) {
+      print("Error: Y and RT must be of equal dimension.")
+      return (NULL)
+    }
+  
+  N <- nrow(Y)
+  K <- ncol(Y)
   
     if (!is.null(XPA)) {
       XPA <- as.matrix(XPA)
+      if (nrow(XPA) != N) {
+        print("Error: nrow(XPA) must be equal to the number of persons.")
+        return (NULL)
+      }
     }
     if (!is.null(XPT)) {
       XPT <- as.matrix(XPT)
+      if (nrow(XPT) != N) {
+        print("Error: nrow(XPT) must be equal to the number of persons.")
+        return (NULL)
+      }
     }
     if (!is.null(XIA)) {
       XIA <- as.matrix(XIA)
+      if (nrow(XIA) != K) {
+        print("Error: nrow(XIA) must be equal to the number of items.")
+        return (NULL)
+      }
     }
     if (!is.null(XIT)) {
       XIT <- as.matrix(XIT)
+      if (nrow(XIT) != K) {
+        print("Error: nrow(XIT) must be equal to the number of items.")
+        return (NULL)
+      }
     }
     
     PNO <- guess # TRUE: guessing included
@@ -151,8 +177,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = F
 		difft <- 1 #time intensity known
 	}
 
-    N <- nrow(Y)
-    K <- ncol(Y)
+
 
 
     if (is.null(XPA) && is.null(XPT)){

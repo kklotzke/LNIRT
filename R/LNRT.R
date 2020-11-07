@@ -72,15 +72,25 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, XGresid = 1000, residual = FA
     data = NULL
   }
   
-  if (!is.null(XPT)) {
-    XPT <- as.matrix(XPT)
-  }
-  if (!is.null(XIT)) {
-    XIT <- as.matrix(XIT)
-  }
+  RT <- as.matrix(RT)
   
   N <- nrow(RT)
   K <- ncol(RT)
+  
+  if (!is.null(XPT)) {
+    XPT <- as.matrix(XPT)
+    if (nrow(XPT) != N) {
+      print("Error: nrow(XPT) must be equal to the number of persons.")
+      return (NULL)
+    }
+  }
+  if (!is.null(XIT)) {
+    XIT <- as.matrix(XIT)
+    if (nrow(XIT) != K) {
+      print("Error: nrow(XIT) must be equal to the number of items.")
+      return (NULL)
+    }
+  }
   
   if(WL) { 
     td <- TRUE   #WL <- 1  #time discrimination = 1/sqrt(error variance)
