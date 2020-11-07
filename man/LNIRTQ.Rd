@@ -4,7 +4,7 @@
 \alias{LNIRTQ}
 \title{Log-normal response time IRT modelling with variable person speed (intercept, trend, quadratic)}
 \usage{
-LNIRTQ(Y, RT, X, XG = 1000, burnin = 10)
+LNIRTQ(Y, RT, X, data, XG = 1000, burnin = 10)
 }
 \arguments{
 \item{Y}{a Person-x-Item matrix of responses.}
@@ -12,6 +12,12 @@ LNIRTQ(Y, RT, X, XG = 1000, burnin = 10)
 \item{RT}{a Person-x-Item matrix of log-response times (time spent on solving an item).}
 
 \item{X}{explanatory (time) variables for random person speed (default: (1:N.items - 1)/N.items).}
+
+\item{data}{either a list or a simLNIRTQ object containing the response time and response matrices 
+and optionally the predictors for the item and person parameters. 
+If a simLNIRTQ object is provided, in the summary the simulated item and time parameters are shown alongside of the estimates.
+If the required variables cannot be found in the list, or if no data object is given, then the variables are taken
+from the environment from which LNIRTQ is called.}
 
 \item{XG}{the number of MCMC iterations to perform (default: 1000).}
 

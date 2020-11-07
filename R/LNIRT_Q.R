@@ -9,6 +9,12 @@
 #' a Person-x-Item matrix of log-response times (time spent on solving an item).
 #' @param Y
 #' a Person-x-Item matrix of responses.
+#' @param data
+#' either a list or a simLNIRTQ object containing the response time and response matrices 
+#' and optionally the predictors for the item and person parameters. 
+#' If a simLNIRTQ object is provided, in the summary the simulated item and time parameters are shown alongside of the estimates.
+#' If the required variables cannot be found in the list, or if no data object is given, then the variables are taken
+#' from the environment from which LNIRTQ is called.
 #' @param X
 #' explanatory (time) variables for random person speed (default: (1:N.items - 1)/N.items). 
 #' @param XG
@@ -19,7 +25,7 @@
 #' @return 
 #' an object of class LNIRTQ. 
 #' @export
-LNIRTQ <- function(Y, RT, X, XG = 1000, burnin = 10){
+LNIRTQ <- function(Y, RT, X, data, XG = 1000, burnin = 10){
   ## Y = response matrix of dim(N=persons,K=items)
   ## RT = log-response time matrix (time spent on solving an item) of dim(N=persons,K=items) 
   ## XG = number of XG iterations for the MCMC algorithm
@@ -32,6 +38,17 @@ LNIRTQ <- function(Y, RT, X, XG = 1000, burnin = 10){
   if ((burnin <= 0) || (burnin >= XG)) {
     print("Error: burn-in period must be between 0% and 100%.")
     return (NULL)
+  }
+  
+  if (!missing(data) && !is.null(data)) {
+    # Try to find RT and Y in the data set first
+    tryCatch(RT <- eval(substitute(RT), data), error=function(e) NULL)
+    tryCatch(Y <- eval(substitute(Y), data), error=function(e) NULL)
+    
+    # Try to find explanatory (time) variables in the data set first
+    tryCatch(X <- eval(substitute(X), data), error=function(e) NULL)
+  } else {
+    data <- NULL
   }
   
   Y <- as.matrix(Y)
@@ -212,13 +229,17 @@ if(ii > 1000){
    lZP <- lZP/(XG-1000)
    lZPT <- lZPT/(XG-1000)
    EAPresid <- EAPresid/(XG-1000) 	
+}
+  
+  if (!(any(class(data) == "simLNIRTQ"))) {
+    data <- NULL # only attach sim data for summary function
   }
 
  if(XG > 1000){
    out <- list(Mtheta=MT, MAB=MAB, MmuP = MmuP,MSP= MSP, MmuI=MmuI, MSI = MSI, Msigma2=Msigma2,lZP=lZP,lZPT=lZPT,
-               EAPresid=EAPresid,EAPKS=EAPKS, XG = XG, burnin = burnin)
+               EAPresid=EAPresid,EAPKS=EAPKS, XG = XG, burnin = burnin, data = data)
   }else{
-	  out<- list(Mtheta=MT, MAB=MAB, MmuP = MmuP,MSP= MSP, MmuI=MmuI, MSI = MSI, Msigma2=Msigma2, XG = XG, burnin = burnin)
+	  out<- list(Mtheta=MT, MAB=MAB, MmuP = MmuP,MSP= MSP, MmuI=MmuI, MSI = MSI, Msigma2=Msigma2, XG = XG, burnin = burnin, data = data)
   }
   
   class(out) <- c("LNIRTQ", "list")

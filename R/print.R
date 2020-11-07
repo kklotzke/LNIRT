@@ -1105,5 +1105,10 @@ print.summary.LNRT <- function(x, ...)
 #' @export
 print.summary.LNIRTQ <- function(x, ...)
 {
-  summaryIRTQ(out = x$object)
+  if (!is.null(x$object$data)) { # sim data
+    summaryIRTQ(out = x$object, data = x$object$data)
+  }
+  else {
+    summaryIRTQ(out = x$object)
+  }
 }

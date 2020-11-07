@@ -107,7 +107,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = F
       tryCatch(XIA <- eval(substitute(XIA), data), error=function(e) NULL)
       tryCatch(XIT <- eval(substitute(XIT), data), error=function(e) NULL)
     } else {
-      data = NULL
+      data <- null
     }
   Y <- as.matrix(Y)
   RT <- as.matrix(RT)
