@@ -25,8 +25,8 @@ LNIRT(
   XPT = NULL,
   XIA = NULL,
   XIT = NULL,
-  MBDY,
-  MBDT
+  MBDY = NULL,
+  MBDT = NULL
 )
 }
 \arguments{
@@ -74,9 +74,9 @@ from the environment from which LNIRT is called.}
 
 \item{XIT}{an optional matrix of predictors for the item-intensity parameters.}
 
-\item{MBDY}{an optional indicator matrix for response missings due to the test design (0=missing by design,1=not missing by design).}
+\item{MBDY}{an optional indicator matrix for response missings due to the test design (0: missing by design, 1: not missing by design).}
 
-\item{MBDT}{an optional indicator matrix for response time missings due to the test design (0=missing by design,1=not missing by design).}
+\item{MBDT}{an optional indicator matrix for response time missings due to the test design (0: missing by design, 1: not missing by design).}
 }
 \value{
 an object of class LNIRT.

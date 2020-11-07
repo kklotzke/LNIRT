@@ -51,9 +51,9 @@
 #' @param XIT
 #' an optional matrix of predictors for the item-intensity parameters.
 #' @param MBDY
-#' an optional indicator matrix for response missings due to the test design (0=missing by design,1=not missing by design). 
+#' an optional indicator matrix for response missings due to the test design (0: missing by design, 1: not missing by design). 
 #' @param MBDT
-#' an optional indicator matrix for response time missings due to the test design (0=missing by design,1=not missing by design).
+#' an optional indicator matrix for response time missings due to the test design (0: missing by design, 1: not missing by design).
 #' 
 #' @return 
 #' an object of class LNIRT. 
@@ -72,7 +72,7 @@
 #' plot(mcmc.object)
 #' }  
 #' @export
-LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY, MBDT){
+LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = FALSE, par1 = FALSE, residual = FALSE, td = TRUE, WL = FALSE, ident = 2, alpha, beta, phi, lambda, XPA = NULL, XPT = NULL, XIA = NULL, XIT = NULL, MBDY = NULL, MBDT = NULL){
   
     ## ident = 1: Identification : fix mean item difficulty(intensity) and product item (time) discrimination responses and response times 
     ## ident = 2: Identification : fix mean ability and speed and product item discrimination responses and response times 
@@ -106,8 +106,12 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = F
       tryCatch(XPT <- eval(substitute(XPT), data), error=function(e) NULL)
       tryCatch(XIA <- eval(substitute(XIA), data), error=function(e) NULL)
       tryCatch(XIT <- eval(substitute(XIT), data), error=function(e) NULL)
+      
+      # Try to find MBDY and MBDT in the data set first
+      tryCatch(MBDY <- eval(substitute(MBDY), data), error=function(e) NULL)
+      tryCatch(MBDT <- eval(substitute(MBDT), data), error=function(e) NULL)
     } else {
-      data <- null
+      data <- NULL
     }
   Y <- as.matrix(Y)
   RT <- as.matrix(RT)
@@ -148,6 +152,21 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = F
         return (NULL)
       }
     }
+  
+  if (!is.null(MBDY)) {
+    MBDY <- as.matrix(MBDY)
+    if ( (nrow(MBDY) != nrow(Y)) || (ncol(MBDY) != ncol(Y)) ) {
+      print("Error: MBDY and Y must be of equal dimension.")
+      return (NULL)
+    }
+  }
+  if (!is.null(MBDT)) {
+    MBDT <- as.matrix(MBDT)
+    if ( (nrow(MBDT) != nrow(RT)) || (ncol(MBDT) != ncol(RT)) ) {
+      print("Error: MBDT and RT must be of equal dimension.")
+      return (NULL)
+    }
+  }
     
     PNO <- guess # TRUE: guessing included
     #WL <- 1  #time discrimination = 1/sqrt(error variance)
@@ -302,14 +321,14 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = F
     iis <- 1
     
 	## Missing By Design
-	if(missing(MBDY)){
+	if(is.null(MBDY)){
 		MBDY <- matrix(1,ncol=K,nrow=N) ## Y : no missing by design, 0=missing by design,1=not missing by design
 		MBDYI <- TRUE #no design missing Y
 	}else{
 		MBDYI <- FALSE #design missings Y
 		Y[MBDY==0] <- 0 #recode design missings to 0 
 	}
-	if(missing(MBDT)){
+	if(is.null(MBDT)){
 		MBDT <- matrix(1,ncol=K,nrow=N) ## RT: no missing by design, 0=missing by design,1=not missing by design
 		MBDTI <- TRUE #no design missing RT
 	}else{
