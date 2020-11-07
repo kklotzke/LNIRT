@@ -48,8 +48,8 @@ summaryIRTQ <- function(out, data){
     
   N <- nrow(out$Mtheta)
   K <- ncol(out$MAB[,,1])
-  XG <- object$XG #length(object$MAB[, 1, 1])
-  bi <- round(XG * object$burnin/100, 0)  #burnin
+  XG <- out$XG #length(object$MAB[, 1, 1])
+  bi <- round(XG * out$burnin/100, 0)  #burnin
   #XG <- length(out$MAB[,1,1])
   #bi <- round(.10*XG,0)  #burnin
   

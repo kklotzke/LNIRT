@@ -61,7 +61,7 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, XGresid = 1000, residual = FA
     residual <- FALSE
   }
   
-  if (!missing(data)) {
+  if (!missing(data) && !is.null(data)) {
     # Try to find RT in the data set first
     tryCatch(RT <- eval(substitute(RT), data), error=function(e) NULL)
     
@@ -401,6 +401,10 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, XGresid = 1000, residual = FA
   Post.Means$Sigma2 <- colMeans(Msigma2[XGburnin:XG, ])
   Post.Means$CovMat.Item  <- c(round(apply(MSI[XGburnin:XG, , 1], 2, mean), 3), round(apply(MSI[XGburnin:XG, , 2], 2, mean), 3))
 
+  if (!(any(class(data) == "simLNIRT"))) {
+    data <- NULL # only attach sim data for summary function
+  }
+  
   if (XG > XGresid && residual) {
       out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, lZP = lZP, lZPT = lZPT, Msigma2 = Msigma2, 
           theta = theta, sigma2 = sigma2, lZI = lZI, EAPresid = EAPresid, EAPKS = EAPKS, RT = RT, EAPCP = EAPCP, td = td, WL = WL, data = data, XPT = XPT, XIT = XIT, XG = XG, burnin = burnin, ident = ident, residual = residual, XGresid = XGresid)

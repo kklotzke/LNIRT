@@ -96,7 +96,7 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = F
       residual <- FALSE
     }
   
-    if (!missing(data)) {
+    if (!missing(data) && !is.null(data)) {
       # Try to find RT and Y in the data set first
       tryCatch(RT <- eval(substitute(RT), data), error=function(e) NULL)
       tryCatch(Y <- eval(substitute(Y), data), error=function(e) NULL)
@@ -857,6 +857,9 @@ LNIRT <- function(RT, Y, data, XG = 1000, burnin = 10, XGresid = 1000, guess = F
     else
       Post.Means$Item.Guessing <- NULL
     
+    if (!(any(class(data) == "simLNIRT"))) {
+      data <- NULL # only attach sim data for summary function
+    }
     
     if (XG > XGresid & residual) {
         out <- list(Post.Means = Post.Means, MCMC.Samples = MCMC.Samples, Mtheta = MT, MTSD = MT2, MAB = MAB, MmuP = MmuP, MSP = MSP, MmuI = MmuI, MSI = MSI, Mguess = Mguess, Msigma2 = Msigma2, 
