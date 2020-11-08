@@ -1,6 +1,12 @@
 #' Amsterdam Chess Test (ACT) data
 #'
 #' Responses and response time data from the Amsterdam Chess Test (ACT).
+#' 
+#' \itemize{
+#'   \item ELO: Standardized ELO rating (numeric)
+#'   \item A1-A40: item correct score (1 or 0) for scored items 1 – 40 (numeric)
+#'   \item AR1-AR40: response time (seconds) for scored items 1 – 40 (numeric)
+#' }
 #'
 #' @docType data
 #'
