@@ -126,7 +126,7 @@ LNIRTQ <-
         max = XG,
         initial = 1,
         style = 3,
-        width = 50,
+        width = 45,
         char = "="
       )
     
