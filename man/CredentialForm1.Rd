@@ -14,6 +14,7 @@ data(CredentialForm1)
 Responses and response time data from the credential data set of Cizek and Wollack (2016).
 }
 \details{
+Variables:
 \itemize{
   \item EID: Examinee ID (character)
   \item FormID: Test form name (character)
