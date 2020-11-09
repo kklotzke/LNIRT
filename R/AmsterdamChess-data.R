@@ -4,8 +4,8 @@
 #' 
 #' \itemize{
 #'   \item ELO: Standardized ELO rating (numeric)
-#'   \item A1-A40: item correct score (1 or 0) for scored items 1 – 40 (numeric)
-#'   \item AR1-AR40: response time (seconds) for scored items 1 – 40 (numeric)
+#'   \item Y1-Y40: item correct score (1 or 0) for scored items 1 – 40 (numeric)
+#'   \item RT1-RT40: response time (seconds) for scored items 1 – 40 (numeric)
 #' }
 #'
 #' @docType data
