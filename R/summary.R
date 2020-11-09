@@ -1,7 +1,11 @@
 #' @method summary LNIRT
 #' @export
-summary.LNIRT <- function(object, ...)
+summary.LNIRT <- function(object, data, ...)
 {
+  if (!missing(data) && !is.null(data) && any(class(data) == "simLNIRT")) {
+    object$data <- data
+  }
+  
   if (any(class(object$data) == "simLNIRT")) {
     simv <- TRUE
   } else {
@@ -136,8 +140,12 @@ summary.LNIRT <- function(object, ...)
 
 #' @method summary LNRT
 #' @export
-summary.LNRT <- function(object, ...)
+summary.LNRT <- function(object, data, ...)
 {
+  if (!missing(data) && !is.null(data) && any(class(data) == "simLNIRT")) {
+    object$data <- data
+  }
+  
   if (any(class(object$data) == "simLNIRT")) {
     simv <- TRUE
   } else {
@@ -252,8 +260,11 @@ summary.LNRT <- function(object, ...)
 
 #' @method summary LNIRTQ
 #' @export
-summary.LNIRTQ <- function(object, ...)
+summary.LNIRTQ <- function(object, data, ...)
 {
+  if (!missing(data) && !is.null(data) && any(class(data) == "simLNIRTQ")) {
+    object$data <- data
+  }
   out <- list("object" = object)
   class(out) <- "summary.LNIRTQ"
   return(out)
