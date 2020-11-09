@@ -102,7 +102,6 @@ LNIRTQ <-
     cat ("   ", rep('-', 20), "\n", sep = "")
     cat ("   Jean-Paul Fox \n")
     cat ("   Konrad Klotzke \n")
-    cat ("   Rinke Klein Entink \n")
     cat ("   ", rep('-', 20), "\n\n", sep = "")
     
     #cat ("   ", rep('-', 40), "\n", sep = "")
