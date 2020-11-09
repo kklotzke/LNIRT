@@ -22,8 +22,8 @@ LNIRTQ(
 
 \item{X}{explanatory (time) variables for random person speed (default: (1:N.items - 1)/N.items).}
 
-\item{data}{either a list or a simLNIRTQ object containing the response time and response matrices 
-and optionally the predictors for the item and person parameters. 
+\item{data}{either a list or a simLNIRTQ object containing the response time and response matrices
+and optionally the predictors for the item and person parameters.
 If a simLNIRTQ object is provided, in the summary the simulated item and time parameters are shown alongside of the estimates.
 If the required variables cannot be found in the list, or if no data object is given, then the variables are taken
 from the environment from which LNIRTQ is called.}

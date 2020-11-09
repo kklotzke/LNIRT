@@ -606,6 +606,8 @@ LNRT <-
         )
     }
     
+    cat("\n\n")
+    
     class(out) <- c("LNRT", "list")
     return(out)
   }

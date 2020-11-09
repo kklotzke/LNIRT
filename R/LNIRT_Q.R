@@ -441,6 +441,8 @@ LNIRTQ <-
         )
     }
     
+    cat("\n\n")
+    
     class(out) <- c("LNIRTQ", "list")
     return(out)
   }

@@ -34,8 +34,8 @@ LNIRT(
 
 \item{Y}{a Person-x-Item matrix of responses.}
 
-\item{data}{either a list or a simLNIRT object containing the response time and response matrices 
-and optionally the predictors for the item and person parameters. 
+\item{data}{either a list or a simLNIRT object containing the response time and response matrices
+and optionally the predictors for the item and person parameters.
 If a simLNIRT object is provided, in the summary the simulated item and time parameters are shown alongside of the estimates.
 If the required variables cannot be found in the list, or if no data object is given, then the variables are taken
 from the environment from which LNIRT is called.}
@@ -90,11 +90,11 @@ Log-normal response time IRT modelling
 data <- simLNIRT(N = 500, K = 20, rho = 0.8, WL = FALSE)
 out <- LNIRT(RT = RT, Y = Y, data = data, XG = 1500, residual = TRUE, WL = FALSE)
 summary(out) # Print results
-out$Post.Means$Item.Difficulty # Extract posterior mean estimates 
+out$Post.Means$Item.Difficulty # Extract posterior mean estimates
 
 library(coda)
 mcmc.object <- as.mcmc(out$MCMC.Samples$Item.Difficulty) # Extract MCMC samples for coda
 summary(mcmc.object)
 plot(mcmc.object)
-}  
+}
 }

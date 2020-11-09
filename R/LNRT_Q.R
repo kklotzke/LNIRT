@@ -259,6 +259,9 @@ LNRTQ <- function(RT,
       burnin = burnin,
       data = data
     )
+  
+  cat("\n\n")
+  
   class(out) <- c("LNRTQ", "list")
   return(out)
 }

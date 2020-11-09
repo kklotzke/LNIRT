@@ -11,7 +11,7 @@ LNRTQ(RT, X, data, XG = 1000, burnin = 10)
 
 \item{X}{explanatory (time) variables for random person speed (default: (1:N.items - 1)/N.items).}
 
-\item{data}{either a list or a simLNIRTQ object containing the response time matrix. 
+\item{data}{either a list or a simLNIRTQ object containing the response time matrix.
 If a simLNIRTQ object is provided, in the summary the simulated time parameters are shown alongside of the estimates.
 If the RT variable cannot be found in the list, or if no data object is given, then the RT variable is taken
 from the environment from which LNRTQ is called.}

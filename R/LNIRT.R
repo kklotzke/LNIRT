@@ -1512,6 +1512,8 @@ LNIRT <-
         )
     }
     
+    cat("\n\n")
+    
     class(out) <- c("LNIRT", "list")
     return(out)
     

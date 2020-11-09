@@ -20,7 +20,7 @@ LNRT(
 \arguments{
 \item{RT}{a Person-x-Item matrix of log-response times (time spent on solving an item).}
 
-\item{data}{either a list or a simLNIRT object containing the response time matrix. 
+\item{data}{either a list or a simLNIRT object containing the response time matrix.
 If a simLNIRT object is provided, in the summary the simulated time parameters are shown alongside of the estimates.
 If the RT variable cannot be found in the list, or if no data object is given, then the RT variable is taken
 from the environment from which LNRT is called.}
@@ -59,5 +59,5 @@ library(coda)
 mcmc.object <- as.mcmc(out$MCMC.Samples$Time.Intensity) # Extract MCMC samples for coda
 summary(mcmc.object)
 plot(mcmc.object)
-}  
+}
 }
