@@ -57,6 +57,23 @@ LNRTQ <- function(RT, X, data, XG = 1000, burnin = 10){
    X <- (X-1)/K
   }
   
+  cat (" \n")
+  cat ("   LNIRT v0.5.0 \n")
+  cat ("   ", rep('-', 20), "\n", sep = "")
+  cat ("   Jean-Paul Fox \n")
+  cat ("   Konrad Klotzke \n")
+  cat ("   Rinke Klein Entink \n")
+  cat ("   ", rep('-', 20), "\n\n", sep = "")
+  
+  #cat ("   ", rep('-', 40), "\n", sep = "")
+  cat ("   * MCMC sampler initialized (XG:", XG, ", Burnin:", paste(burnin, "%", sep = ""), ")\n", sep = "")
+  cat ("   * Response time matrix loaded (",N, "x", K, ") \n\n", sep = "")
+  #cat ("   ", rep('-', 40), "\n\n", sep = "")
+  
+  # Initialize progress bar
+  cat ("   MCMC progress: \n")
+  pb <- txtProgressBar(min = 1, max = XG, initial = 1, style = 3, width = 50, char = "=")
+  
 ## population zeta (speed)
   muP <- matrix(0,ncol=1,nrow=Q)
   SigmaP <-  diag(Q)
@@ -140,8 +157,12 @@ LNRTQ <- function(RT, X, data, XG = 1000, burnin = 10){
 	    SigmaI <- rwishart(2 + K, chol2inv(chol(SS)))$IW
 	    MSI[ii,,] <- SigmaI
 
-    	if(ii %% 100 == 0) cat("Iteration ",ii,"\n")
-	flush.console()
+	    # Update progress bar
+	    setTxtProgressBar(pb, ii)
+	    
+	    # if (ii%%100 == 0) 
+	    #     cat("Iteration ", ii, " ", "\n")
+	    # flush.console()
   }
 
 	## end iterations

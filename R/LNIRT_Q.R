@@ -67,7 +67,7 @@ LNIRTQ <- function(Y, RT, X, data, XG = 1000, burnin = 10, XGresid = 1000, resid
     return (NULL)
   }
   
-  ## Initialise all parameters
+    ## Initialise all parameters
 	  N <- nrow(Y) #persons
 	  K <- ncol(Y) #items (complete design)	
 	  Q <- 4 #number of speed components plus ability	
@@ -76,6 +76,24 @@ LNIRTQ <- function(Y, RT, X, data, XG = 1000, burnin = 10, XGresid = 1000, resid
 	    X <- 1:K
 	    X <- (X-1)/K
 	  }
+	  
+	  cat (" \n")
+	  cat ("   LNIRT v0.5.0 \n")
+	  cat ("   ", rep('-', 20), "\n", sep = "")
+	  cat ("   Jean-Paul Fox \n")
+	  cat ("   Konrad Klotzke \n")
+	  cat ("   Rinke Klein Entink \n")
+	  cat ("   ", rep('-', 20), "\n\n", sep = "")
+	  
+	  #cat ("   ", rep('-', 40), "\n", sep = "")
+	  cat ("   * MCMC sampler initialized (XG:", XG, ", Burnin:", paste(burnin, "%", sep = ""), ")\n", sep = "")
+	  cat ("   * Binary response matrix loaded (",N, "x", K, ") \n", sep = "")
+	  cat ("   * Response time matrix loaded (",N, "x", K, ") \n\n", sep = "")
+	  #cat ("   ", rep('-', 40), "\n\n", sep = "")
+	  
+	  # Initialize progress bar
+	  cat ("   MCMC progress: \n")
+	  pb <- txtProgressBar(min = 1, max = XG, initial = 1, style = 3, width = 50, char = "=")
 
 ## population theta (ability - speed)
   theta <- matrix(rnorm(N),ncol=1)
@@ -224,8 +242,12 @@ LNIRTQ <- function(Y, RT, X, data, XG = 1000, burnin = 10, XGresid = 1000, resid
         	iis <- iis + 1
 	}
 
-	if(ii %% 100 == 0) cat("Iteration ",ii," ","\n")
-	flush.console()
+    	# Update progress bar
+    	setTxtProgressBar(pb, ii)
+    	
+    	# if (ii%%100 == 0) 
+    	#     cat("Iteration ", ii, " ", "\n")
+    	# flush.console()
 
 
   }## end iterations

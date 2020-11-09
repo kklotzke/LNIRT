@@ -96,6 +96,23 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, XGresid = 1000, residual = FA
     td <- TRUE   #WL <- 1  #time discrimination = 1/sqrt(error variance)
   }
   
+  cat (" \n")
+  cat ("   LNIRT v0.5.0 \n")
+  cat ("   ", rep('-', 20), "\n", sep = "")
+  cat ("   Jean-Paul Fox \n")
+  cat ("   Konrad Klotzke \n")
+  cat ("   Rinke Klein Entink \n")
+  cat ("   ", rep('-', 20), "\n\n", sep = "")
+  
+  #cat ("   ", rep('-', 40), "\n", sep = "")
+  cat ("   * MCMC sampler initialized (XG:", XG, ", Burnin:", paste(burnin, "%", sep = ""), ")\n", sep = "")
+  cat ("   * Response time matrix loaded (",N, "x", K, ") \n\n", sep = "")
+  #cat ("   ", rep('-', 40), "\n\n", sep = "")
+  
+  # Initialize progress bar
+  cat ("   MCMC progress: \n")
+  pb <- txtProgressBar(min = 1, max = XG, initial = 1, style = 3, width = 50, char = "=")
+  
   ## Predictors person
   if (is.null(XPT)){
     nopredictorp <- TRUE
@@ -353,9 +370,12 @@ LNRT <- function(RT, data, XG = 1000, burnin = 10, XGresid = 1000, residual = FA
           iis <- iis + 1
       }
       
-      if (ii%%100 == 0) 
-          cat("Iteration ", ii, " ", "\n")
-      flush.console()
+      # Update progress bar
+      setTxtProgressBar(pb, ii)
+      
+      # if (ii%%100 == 0) 
+      #     cat("Iteration ", ii, " ", "\n")
+      # flush.console()
   }
   
   MT <- MT/XG
