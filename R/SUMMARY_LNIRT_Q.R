@@ -814,7 +814,7 @@ summaryIRTQ <- function(out, data) {
     # cat("\n\n", "Person Matrix Correlation", "\n")
     # print(round(Cor1, 3))
   }
-  
+  cat("\n\n")
 }
 
 
