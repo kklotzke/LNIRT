@@ -184,7 +184,7 @@ summaryIRTQ <- function(out, data) {
     cat("\n", "Log-Normal RT Modeling, 2013, J.P. Fox")
   }
   if (Qmodel) {
-    cat("\n", "LNIRT-Q Modeling, 2013, J.P. Fox")
+    cat("\n", "LNIRT-Q Modeling")
   }
   
   cat("\n\n", rep('-', 38))
@@ -375,165 +375,230 @@ summaryIRTQ <- function(out, data) {
   }
   
   
-  if (round(pdiscr2[2], 3) == 0 && round(pdiscr2[4], 3) == 0) {
-    cat("\n\n\t", "Mean and Covariance matrix Items", "\n")
-    cat("\n\t", "--- Population Mean Item ---", "\n")
-    cat("\t", "mu_a", "\t", "SD", "\t", "mu_phi", "\t", "SD", "\n\t")
-    for (jj in c(1, 3)) {
-      printF(pdiscr2[jj], w = 6, d = 3)
-      cat("\t")
-      printF(sepdiscr2[jj], w = 6, d = 3)
-      cat("\t")
-    }
+  # if (round(pdiscr2[2], 3) == 0 && round(pdiscr2[4], 3) == 0) {
+  #   cat("\n\n\t", "Mean and Covariance matrix Items", "\n")
+  #   cat("\n\t", "--- Population Mean Items ---", "\n")
+  #   cat("\t", "mu_a", "\t", "SD", "\t", "mu_phi", "\t", "SD", "\n\t")
+  #   for (jj in c(1, 3)) {
+  #     printF(pdiscr2[jj], w = 6, d = 3)
+  #     cat("\t")
+  #     printF(sepdiscr2[jj], w = 6, d = 3)
+  #     cat("\t")
+  #   }
+  # }
+  # else{
+  cat("\n\n\t", "Mean and Covariance matrix Items", "\n")
+  cat("\n\t", "--- Population Mean Items ---", "\n")
+  cat(
+    "\t",
+    "mu_a",
+    "\t",
+    "  SD",
+    "\t",
+    "    mu_b",
+    "    ",
+    "SD",
+    "\t",
+    "mu_phi",
+    "  ",
+    "SD",
+    "     ",
+    "mu_lambda",
+    "",
+    "SD",
+    "\n\t"
+  )
+  for (jj in c(1, 2, 3, 4)) {
+    printF(pdiscr2[jj], w = 6, d = 3)
+    cat("    ")
+    printF(sepdiscr2[jj], w = 6, d = 3)
+    cat("    ")
   }
-  else{
-    cat("\n\n\t", "Mean and Covariance matrix Items", "\n")
-    cat("\n\t", "--- Population Mean Item ---", "\n")
-    cat(
-      "\t",
-      "mu_a",
-      "\t",
-      "SD",
-      "\t",
-      "mu_b",
-      "\t",
-      "SD",
-      "\t",
-      "mu_phi",
-      "\t",
-      "SD",
-      "\t",
-      "mu_lambda",
-      "\t",
-      "SD",
-      "\n\t"
-    )
-    for (jj in c(1, 2, 3, 4)) {
-      printF(pdiscr2[jj], w = 6, d = 3)
-      cat("\t")
-      printF(sepdiscr2[jj], w = 6, d = 3)
-      cat("\t")
-    }
-  }
+  #}
   
   
   cat("\n\n\t", "--- Covariance matrix Items ---", "\n")
   cat(
-    "\t\t\t\t\t\t\t",
-    "a",
-    "\t\t\t\t\t\t\t",
-    "b",
-    "\t\t\t\t\t\t\t",
-    "phi",
-    "\t\t\t\t\t\t\t",
-    "lambda",
-    "\n\t"
+    "\t\t   a",
+    "\t\t", " ", "b",
+    "\t\t", " ", "phi",
+    "\t\t", " ", "lambda",
+    "\n"
   )
   
   
-  cat("a")
+  cat("\ta\t")
   for (ii in c(1, 2, 3, 4)) {
-    printF(pSdiscr2[ii], w = 10, d = 3)
+    printF(pSdiscr2[ii], w = 8, d = 3)
     cat("\t")
   }
   
-  cat("\t", "\n", "b")
+  cat("\t", "\n", "\tb")
   cat("\t", "      ", "\t")
   for (ii in c(6, 7, 8)) {
-    printF(pSdiscr2[ii], w = 10, d = 3)
+    printF(pSdiscr2[ii], w = 8, d = 3)
     cat("\t")
     
   }
   
-  cat("\t", "\n", "phi")
+  cat("\t", "\n", "\tphi")
   cat("\t", "      ", "\t", "      ", "\t")
   for (ii in c(11, 12)) {
-    printF(pSdiscr2[ii], w = 10, d = 3)
+    printF(pSdiscr2[ii], w = 8, d = 3)
     cat("\t")
     
   }
   
-  cat("\t", "\n", "lambda")
+  cat("\t", "\n", "\tlambda")
   cat("\t", "      ", "\t", "      ", "\t", "      ", "\t")
   for (ii in c(16)) {
-    printF(pSdiscr2[ii], w = 9, d = 3)
+    printF(pSdiscr2[ii], w = 8, d = 3)
     cat("\t")
     
   }
   
   cat("\n\n\t", "--- Standard Error of Estimated Covariance ---", "\n")
   cat(
-    "\t\t\t\t\t\t\t",
-    "a",
-    "\t\t\t\t\t\t\t",
-    "b",
-    "\t\t\t\t\t\t\t",
-    "phi",
-    "\t\t\t\t\t\t\t",
-    "lambda",
-    "\n\t"
+    "\t\t   a",
+    "\t\t", " ", "b",
+    "\t\t", " ", "phi",
+    "\t\t", " ", "lambda",
+    "\n"
   )
   
-  cat("a")
+  cat("\ta\t")
   for (ii in c(1, 2, 3, 4)) {
-    printF(sepSdiscr2[ii], w = 10, d = 3)
+    printF(sepSdiscr2[ii], w = 8, d = 3)
     cat("\t")
   }
   
-  cat("\t", "\n", "b")
+  cat("\t", "\n", "\tb")
   cat("\t", "      ", "\t")
   for (ii in c(6, 7, 8)) {
-    printF(sepSdiscr2[ii], w = 10, d = 3)
+    printF(sepSdiscr2[ii], w = 8, d = 3)
     cat("\t")
+    
   }
   
-  cat("\t", "\n", "phi")
+  cat("\t", "\n", "\tphi")
   cat("\t", "      ", "\t", "      ", "\t")
   for (ii in c(11, 12)) {
-    printF(sepSdiscr2[ii], w = 10, d = 3)
+    printF(sepSdiscr2[ii], w = 8, d = 3)
+    cat("\t")
+    
+  }
+  
+  cat("\t", "\n", "\tlambda")
+  cat("\t", "      ", "\t", "      ", "\t", "      ", "\t")
+  for (ii in c(16)) {
+    printF(sepSdiscr2[ii], w = 8, d = 3)
+    cat("\t")
+    
+  }
+  
+  
+  cat("\n\n\t", "--- Correlation matrix Items ---", "\n")
+  cat(
+    "\t\t   a",
+    "\t\t", " ", "b",
+    "\t\t", " ", "phi",
+    "\t\t", " ", "lambda",
+    "\n"
+  )
+  mat <- cov2cor(matrix(pSdiscr2, 4, 4, byrow = TRUE))
+  
+  cat("\ta\t")
+  for (ii in c(1, 2, 3, 4)) {
+    printF(mat[1, ii], w = 8, d = 3)
     cat("\t")
   }
   
-  cat("\t", "\n", "lambda")
-  cat("\t", "      ", "\t", "      ", "\t", "      ", "\t")
-  for (ii in c(16)) {
-    printF(sepSdiscr2[ii], w = 9, d = 3)
-    cat("\t\n")
+  cat("\t", "\n", "\tb")
+  cat("\t", "      ", "\t")
+  for (ii in c(2, 3, 4)) {
+    printF(mat[2, ii], w = 8, d = 3)
+    cat("\t")
+    
   }
   
-  cat("\n", "Item Matrix Correlation", "\n")
-  print(cov2cor(matrix(pSdiscr2, 4, 4, byrow = TRUE)))
+  cat("\t", "\n", "\tphi")
+  cat("\t", "      ", "\t", "      ", "\t")
+  for (ii in c(3, 4)) {
+    printF(mat[3, ii], w = 8, d = 3)
+    cat("\t")
+    
+  }
   
-  cat("\n\n\t", "Mean and Covariance matrix Persons", "\n")
+  cat("\t", "\n", "\tlambda")
+  cat("\t", "      ", "\t", "      ", "\t", "      ", "\t")
+  for (ii in c(4)) {
+    printF(mat[4, ii], w = 8, d = 3)
+    cat("\t")
+    
+  }
+  
+  # cat("\n\n\t", "Item Matrix Correlation", "\n")
+  # mat <- cov2cor(matrix(pSdiscr2, 4, 4, byrow = TRUE))
+  # rownames(mat) <- colnames(mat) <- c("a", "b", "phi", "lambda") 
+  # print(round(mat, 3))
+  
+  cat("\n\n\t", "Mean and Covariance matrix Person", "\n")
   cat("\n\t", "--- Population Mean Person ---", "\n")
   
   if (Qmodel) {
     cat(
       "\t",
-      "Ability",
-      "\t",
+      "Theta",
+      "   ",
       "SD",
       "\t",
-      "Intercept",
-      "\t ",
+      "    Intercept",
       "SD",
       "\t",
       "Slope1",
-      "\t ",
+      "  ",
       "SD",
-      "\t",
+      "      ",
       "Slope2",
-      "\t ",
+      "  ",
       "SD",
       "\n\t"
     )
     for (jj in c(1, 2, 3, 4)) {
       printF(ppers2[jj], w = 6, d = 3)
-      cat("\t")
+      cat("    ")
       printF(seppers2[jj], w = 6, d = 3)
-      cat("\t")
+      cat("    ")
     }
   }
+    
+  #   
+  #   cat(
+  #     "\t",
+  #     "Ability",
+  #     "\t",
+  #     "SD",
+  #     "\t",
+  #     "Intercept",
+  #     "\t ",
+  #     "SD",
+  #     "\t",
+  #     "Slope1",
+  #     "\t ",
+  #     "SD",
+  #     "\t",
+  #     "Slope2",
+  #     "\t ",
+  #     "SD",
+  #     "\n\t"
+  #   )
+  #   for (jj in c(1, 2, 3, 4)) {
+  #     printF(ppers2[jj], w = 6, d = 3)
+  #     cat("\t")
+  #     printF(seppers2[jj], w = 6, d = 3)
+  #     cat("\t")
+  #   }
+  # }
   else{
     cat("\t",
         "mu_Y",
@@ -559,7 +624,7 @@ summaryIRTQ <- function(out, data) {
     cat("\n", "Standard Error of Estimated Covariance", "\n")
     print(mat_sd1)
     cat("\n", "Person Matrix Correlation", "\n")
-    print(Cor1)
+    print(round(Cor1, 3))
   }
   
   if (gammamodel) {
@@ -571,35 +636,183 @@ summaryIRTQ <- function(out, data) {
     cat("\t")
   }
   
-  
-  if (Qmodel) {
-    cat("\n\n\t", "--- Covariance matrix Person ---", "\n")
-    if (simv) {
-      cat("\n\n\t", "True Value")
-      cat("\n", "Covariance Matrix", "\n")
-      print(sigR)
+    if (Qmodel) {
+    #cat("\n\n\t", "--- Covariance matrix Person ---", "\n")
+      if (simv) {
+        # cat("\n", "Covariance Matrix (Simulated)", "\n")
+        # print(sigR)
+        
+        cat("\n\n\t", "--- Covariance matrix Person (Simulated) ---", "\n")
+        cat(
+          "\t\t   Theta",
+          "\t", " ", "Intercept",
+          "\t", " ", "Slope1",
+          "\t", " ", "Slope2",
+          "\n"
+        )
+        mat <- sigR
+        
+        cat("\tTheta\t")
+        for (ii in c(1, 2, 3, 4)) {
+          printF(mat[1, ii], w = 8, d = 3)
+          cat("\t")
+        }
+        
+        cat("\t", "\n", "\tIntercept")
+        cat("\t", "       ")
+        for (ii in c(2, 3, 4)) {
+          printF(mat[2, ii], w = 8, d = 3)
+          cat("\t")
+          
+        }
+        
+        cat("\t", "\n", "\tSlope1")
+        cat("\t", "      ", "\t", "      ", "\t")
+        for (ii in c(3, 4)) {
+          printF(mat[3, ii], w = 8, d = 3)
+          cat("\t")
+          
+        }
+        
+        cat("\t", "\n", "\tSlope2")
+        cat("\t", "      ", "\t", "      ", "\t", "      ", "\t")
+        for (ii in c(4)) {
+          printF(mat[4, ii], w = 8, d = 3)
+          cat("\t")
+          
+        }
+      }
       
-      cat("\n", "Estimated Value")
-      cat("\n", "Covariance Matrix", "\n")
-      print(cov1)
+      cat("\n\n\t", "--- Covariance matrix Person ---", "\n")
+      cat(
+        "\t\t   Theta",
+        "\t", " ", "Intercept",
+        "\t", " ", "Slope1",
+        "\t", " ", "Slope2",
+        "\n"
+      )
+      mat <- cov1
       
-      cat("\n", "Standard Error of Estimated Covariance", "\n")
-      print(cov2)
+      cat("\tTheta\t")
+      for (ii in c(1, 2, 3, 4)) {
+        printF(mat[1, ii], w = 8, d = 3)
+        cat("\t")
+      }
       
-      cat("\n", "Person Matrix Correlation", "\n")
-      print(Cor1)
-    }
-    else{
-      cat("\n", "Estimated Value")
-      cat("\n", "Covariance Matrix", "\n")
-      print(cov1)
+      cat("\t", "\n", "\tIntercept")
+      cat("\t", "       ")
+      for (ii in c(2, 3, 4)) {
+        printF(mat[2, ii], w = 8, d = 3)
+        cat("\t")
+        
+      }
       
-      cat("\n", "Standard Error of Estimated Covariance", "\n")
-      print(cov2)
+      cat("\t", "\n", "\tSlope1")
+      cat("\t", "      ", "\t", "      ", "\t")
+      for (ii in c(3, 4)) {
+        printF(mat[3, ii], w = 8, d = 3)
+        cat("\t")
+        
+      }
       
-      cat("\n", "Person Matrix Correlation", "\n")
-      print(Cor1)
-    }
+      cat("\t", "\n", "\tSlope2")
+      cat("\t", "      ", "\t", "      ", "\t", "      ", "\t")
+      for (ii in c(4)) {
+        printF(mat[4, ii], w = 8, d = 3)
+        cat("\t")
+        
+      }
+      
+      
+      cat("\n\n\t", "--- Standard Error of Estimated Covariance ---", "\n")
+      cat(
+        "\t\t   Theta",
+        "\t", " ", "Intercept",
+        "\t", " ", "Slope1",
+        "\t", " ", "Slope2",
+        "\n"
+      )
+      mat <- cov2
+      
+      cat("\tTheta\t")
+      for (ii in c(1, 2, 3, 4)) {
+        printF(mat[1, ii], w = 8, d = 3)
+        cat("\t")
+      }
+      
+      cat("\t", "\n", "\tIntercept")
+      cat("\t", "       ")
+      for (ii in c(2, 3, 4)) {
+        printF(mat[2, ii], w = 8, d = 3)
+        cat("\t")
+        
+      }
+      
+      cat("\t", "\n", "\tSlope1")
+      cat("\t", "      ", "\t", "      ", "\t")
+      for (ii in c(3, 4)) {
+        printF(mat[3, ii], w = 8, d = 3)
+        cat("\t")
+        
+      }
+      
+      cat("\t", "\n", "\tSlope2")
+      cat("\t", "      ", "\t", "      ", "\t", "      ", "\t")
+      for (ii in c(4)) {
+        printF(mat[4, ii], w = 8, d = 3)
+        cat("\t")
+        
+      }
+      
+      cat("\n\n\t", "--- Correlation matrix Person ---", "\n")
+      cat(
+        "\t\t   Theta",
+        "\t", " ", "Intercept",
+        "\t", " ", "Slope1",
+        "\t", " ", "Slope2",
+        "\n"
+      )
+      mat <- Cor1
+      
+      cat("\tTheta\t")
+      for (ii in c(1, 2, 3, 4)) {
+        printF(mat[1, ii], w = 8, d = 3)
+        cat("\t")
+      }
+      
+      cat("\t", "\n", "\tIntercept")
+      cat("\t", "       ")
+      for (ii in c(2, 3, 4)) {
+        printF(mat[2, ii], w = 8, d = 3)
+        cat("\t")
+        
+      }
+      
+      cat("\t", "\n", "\tSlope1")
+      cat("\t", "      ", "\t", "      ", "\t")
+      for (ii in c(3, 4)) {
+        printF(mat[3, ii], w = 8, d = 3)
+        cat("\t")
+        
+      }
+      
+      cat("\t", "\n", "\tSlope2")
+      cat("\t", "      ", "\t", "      ", "\t", "      ", "\t")
+      for (ii in c(4)) {
+        printF(mat[4, ii], w = 8, d = 3)
+        cat("\t")
+        
+      }
+      
+    # cat("\n\n", "Estimated Value")
+    # cat("\n", "Covariance Matrix", "\n")
+    # print(cov1)
+      
+    # cat("\n", "Standard Error of Estimated Covariance", "\n")
+    # print(cov2)
+      
+    # cat("\n\n", "Person Matrix Correlation", "\n")
+    # print(round(Cor1, 3))
   }
   
 }
