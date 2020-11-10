@@ -118,11 +118,11 @@ LNRT <-
     }
     
     cat (" \n")
-    cat ("   LNIRT v0.5.0 \n")
-    cat ("   ", rep('-', 20), "\n", sep = "")
-    cat ("   Jean-Paul Fox \n")
-    cat ("   Konrad Klotzke \n")
+    cat ("   LNIRT v", packageDescription("LNIRT")$Version, "\n", sep = "")
     cat ("   ", rep('-', 20), "\n\n", sep = "")
+    # cat ("   Jean-Paul Fox \n")
+    # cat ("   Konrad Klotzke \n")
+    # cat ("   ", rep('-', 20), "\n\n", sep = "")
     
     #cat ("   ", rep('-', 40), "\n", sep = "")
     cat (
