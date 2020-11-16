@@ -4,7 +4,7 @@
 #' @importFrom methods hasArg
 #' @importFrom stats ks.test pchisq pgamma pnorm qnorm rbeta
 #' rbinom rchisq rgamma rlnorm rnorm runif var cov2cor sd
-#' @importFrom utils flush.console
+#' @importFrom utils flush.console packageDescription setTxtProgressBar txtProgressBar
 #'
 #' @param RT
 #' a Person-x-Item matrix of log-response times (time spent on solving an item).
