@@ -391,7 +391,7 @@ LNIRTQ <-
       EAPresid <- EAPresid / (XG - XGresid)
     }
     
-    if (!(any(class(data) == "simLNIRTQ"))) {
+    if (!(is(data, "simLNIRTQ"))) {
       data <- NULL # only attach sim data for summary function
     }
     

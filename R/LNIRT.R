@@ -1410,7 +1410,7 @@ LNIRT <-
     else
       Post.Means$Item.Guessing <- NULL
     
-    if (!(any(class(data) == "simLNIRT"))) {
+    if (!(is(data, "simLNIRT"))) {
       data <- NULL # only attach sim data for summary function
     }
     

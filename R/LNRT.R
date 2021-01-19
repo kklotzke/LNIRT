@@ -529,7 +529,7 @@ LNRT <-
     Post.Means$CovMat.Item  <-
       c(round(apply(MSI[XGburnin:XG, , 1], 2, mean), 3), round(apply(MSI[XGburnin:XG, , 2], 2, mean), 3))
     
-    if (!(any(class(data) == "simLNIRT"))) {
+    if (!(is(data, "simLNIRT"))) {
       data <- NULL # only attach sim data for summary function
     }
     

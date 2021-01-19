@@ -234,7 +234,7 @@ LNRTQ <- function(RT,
       sqrt(MZ2[[jj]] / XG - MZ[[jj]] ^ 2) ## calculate posterior SD of person parameters.
   }
   
-  if (!(any(class(data) == "simLNIRTQ"))) {
+  if (!(is(data, "simLNIRTQ"))) {
     data <- NULL # only attach sim data for summary function
   }
   
