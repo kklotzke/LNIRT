@@ -33,11 +33,9 @@ LNRTQ <- function(RT,
   
   if (XG <= 0) {
     stop("XG must be > 0.")
-    return (NULL)
   }
   if ((burnin <= 0) || (burnin >= XG)) {
     stop("burn-in period must be between 0% and 100%.")
-    return (NULL)
   }
   
   if (!missing(data) && !is.null(data)) {
