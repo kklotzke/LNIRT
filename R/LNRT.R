@@ -28,7 +28,7 @@
 #' an object of class LNRT.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Log-normal response time modelling
 #' data <- simLNIRT(N = 500, K = 20, rho = 0.8, WL = FALSE)
 #' out <- LNRT(RT = RT, data = data, XG = 1500, residual = TRUE, td = TRUE, WL = FALSE)
