@@ -32,11 +32,11 @@ LNRTQ <- function(RT,
   ## XG = number of iterations for the MCMC algorithm
   
   if (XG <= 0) {
-    print("Error: XG must be > 0.")
+    stop("XG must be > 0.")
     return (NULL)
   }
   if ((burnin <= 0) || (burnin >= XG)) {
-    print("Error: burn-in period must be between 0% and 100%.")
+    stop("burn-in period must be between 0% and 100%.")
     return (NULL)
   }
   
@@ -72,11 +72,6 @@ LNRTQ <- function(RT,
   cat (" \n")
   cat ("   LNIRT v", packageDescription("LNIRT")$Version, "\n", sep = "")
   cat ("   ", rep('-', 20), "\n\n", sep = "")
-  # cat ("   Jean-Paul Fox \n")
-  # cat ("   Konrad Klotzke \n")
-  # cat ("   ", rep('-', 20), "\n\n", sep = "")
-  
-  #cat ("   ", rep('-', 40), "\n", sep = "")
   cat (
     "   * MCMC sampler initialized (XG:",
     XG,
@@ -86,7 +81,6 @@ LNRTQ <- function(RT,
     sep = ""
   )
   cat ("   * Response time matrix loaded (", N, "x", K, ") \n\n", sep = "")
-  #cat ("   ", rep('-', 40), "\n\n", sep = "")
   
   # Initialize progress bar
   cat ("   MCMC progress: \n")
