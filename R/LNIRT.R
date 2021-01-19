@@ -59,7 +59,7 @@
 #' an object of class LNIRT.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Log-normal response time IRT modelling
 #' data <- simLNIRT(N = 500, K = 20, rho = 0.8, WL = FALSE)
 #' out <- LNIRT(RT = RT, Y = Y, data = data, XG = 1500, residual = TRUE, WL = FALSE)
